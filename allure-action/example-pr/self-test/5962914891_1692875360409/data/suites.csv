@@ -1,0 +1,3 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Thu Aug 24 11:09:08 GMT 2023","Thu Aug 24 11:09:09 GMT 2023","934","chromium","","","","","html list",""
+"passed","Thu Aug 24 11:09:08 GMT 2023","Thu Aug 24 11:09:09 GMT 2023","1131","chromium","","","","","allure list",""

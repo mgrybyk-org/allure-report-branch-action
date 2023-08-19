@@ -1,0 +1,1 @@
+A snapshot doesn't exist at /home/runner/work/allure-report-branch-action/allure-report-branch-action/tests/allure-list.spec.ts-snapshots/allure-list-1-webkit-linux.png, writing actual.

@@ -1,0 +1,4 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Mon Aug 21 18:47:45 GMT 2023","Mon Aug 21 18:47:46 GMT 2023","1337","chromium","","","","","allure list",""
+"passed","Mon Aug 21 18:47:47 GMT 2023","Mon Aug 21 18:47:50 GMT 2023","3066","firefox","","","","","allure list",""
+"passed","Mon Aug 21 18:47:51 GMT 2023","Mon Aug 21 18:47:54 GMT 2023","2957","webkit","","","","","allure list",""

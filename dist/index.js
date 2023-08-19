@@ -10098,7 +10098,13 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 const baseDir = 'allure-action';
 const getBranchName = (gitRef) => gitRef.replace('refs/heads/', '');
 const spawnAllure = async (allureResultsDir, allureReportDir) => {
-    const allureChildProcess = child_process__WEBPACK_IMPORTED_MODULE_3__.spawn('allure', ['generate', '--clean', allureResultsDir, '-o', allureReportDir]);
+    const allureChildProcess = child_process__WEBPACK_IMPORTED_MODULE_3__.spawn('/allure-commandline/bin/allure', [
+        'generate',
+        '--clean',
+        allureResultsDir,
+        '-o',
+        allureReportDir,
+    ]);
     const generation = new Promise((resolve, reject) => {
         allureChildProcess.once('error', reject);
         allureChildProcess.once('exit', (code) => (code === 0 ? resolve() : reject(code)));

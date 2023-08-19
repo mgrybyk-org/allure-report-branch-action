@@ -9,7 +9,13 @@ const baseDir = 'allure-action'
 const getBranchName = (gitRef: string) => gitRef.replace('refs/heads/', '')
 
 const spawnAllure = async (allureResultsDir: string, allureReportDir: string) => {
-    const allureChildProcess = child_process.spawn('allure', ['generate', '--clean', allureResultsDir, '-o', allureReportDir])
+    const allureChildProcess = child_process.spawn('/allure-commandline/bin/allure', [
+        'generate',
+        '--clean',
+        allureResultsDir,
+        '-o',
+        allureReportDir,
+    ])
     const generation = new Promise<void>((resolve, reject) => {
         allureChildProcess.once('error', reject)
         allureChildProcess.once('exit', (code: unknown) => (code === 0 ? resolve() : reject(code)))

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "Node16",
+    "module": "ESNext",
+    "target": "ES2021",
+    "skipLibCheck": true,
+    "noEmit": true,
+    /* Linting */
+    "noImplicitAny": true,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src/*.ts", "*.ts", ".eslintrc.cjs", "prebuild.js"]
+}

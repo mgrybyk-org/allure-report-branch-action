@@ -1,0 +1,20 @@
+name: Code Quality
+
+on:
+    pull_request:
+    push:
+        branches: ['main']
+
+jobs:
+    code_quality:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Use Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '16'
+            - run: npm ci --no-fund --no-audit --no-progress
+            - run: npm run precommit
+            - run: npm run build

@@ -1,0 +1,22 @@
+name: 'Allure Report with history bep branch'
+description: 'Generate Allure Report with history per branch'
+author: 'mgrybyk'
+branding:
+  icon: 'layout'
+  color: 'green'
+inputs:
+  report_dir:
+    description: 'Input allure results dir, default "allure-results"'
+    required: true
+    default: 'allure-results'
+  report_id:
+    description: 'Output allure report dir, default "allure-report"'
+    required: true
+    default: 'allure-report'
+  gh_pages:
+    description: 'Folder with gh-pages branch'
+    required: true
+    default: 'gh-pages'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

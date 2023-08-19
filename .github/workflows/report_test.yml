@@ -1,0 +1,77 @@
+name: Test Action
+
+on: [push]
+
+jobs:
+  html_report_test:
+    runs-on: ubuntu-latest
+    name: publish html report
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
+
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - uses: actions/checkout@v3
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v3
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages # branch name
+          path: gh-pages-dir # checkout path
+
+      - name: Local HTML Report
+        uses: ./ # Uses an action in the root directory
+        with:
+          report_id: 'my-allure-report'
+          gh_pages: 'gh-pages-dir'
+          report_dir: 'test/allure-results'
+
+      # Use the output from the `hello` step
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          repository: gh-pages-dir # path to checked out gh-pages branch
+
+  # allure_report_test:
+  #   runs-on: ubuntu-latest
+  #   name: publish allure report
+
+  #   permissions:
+  #     contents: write
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Checkout gh-pages
+  #       uses: actions/checkout@v3
+  #       if: always()
+  #       continue-on-error: true
+  #       with:
+  #         ref: gh-pages # branch name
+  #         path: gh-pages-dir # checkout path
+
+  #     - shell: bash
+  #       run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+
+  #     - name: Allure Report action from marketplace
+  #       uses: simple-elf/allure-report-action@master
+  #       if: always()
+  #       id: allure-report
+  #       with:
+  #         allure_results: test/allure-results
+  #         gh_pages: gh-pages-dir/allure/${{ env.BRANCH_NAME }}
+  #         allure_report: gh-pages-dir/allure/${{ env.BRANCH_NAME }}/allure-report
+  #         allure_history: gh-pages-dir/allure/${{ env.BRANCH_NAME }}/allure-history
+  #         keep_reports: '999'
+  #     - run: ls -al allure-history
+  #     - run: ls -al allure-report
+  #     - run: ls -al gh-pages-dir/allure
+
+  #     # Use the output from the `hello` step
+  #     - uses: stefanzweifel/git-auto-commit-action@v4
+  #       with:
+  #         repository: gh-pages-dir # path to checked out gh-pages branch

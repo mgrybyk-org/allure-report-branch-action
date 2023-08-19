@@ -4,6 +4,7 @@ ARG RELEASE=2.23.1
 ARG ALLURE_REPO=https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline
 
 RUN echo $RELEASE &&
+  apk update &&
   apk add --no-cache wget unzip &&
   rm -rf /var/cache/apk/*
 

@@ -10100,14 +10100,14 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 
 const baseDir = 'allure-action';
 const getBranchName = (gitRef) => gitRef.replace('refs/heads/', '');
-const writeExecutorJson = async (sourceReportDir, { buildUrl, runId, buildOrder, reportUrl, }) => {
+const writeExecutorJson = async (sourceReportDir, { buildUrl, buildOrder, reportUrl, runUniqueId, }) => {
     const dataFile = `${sourceReportDir}/executor.json`;
     const dataJson = {
         // type is required, otherwise allure fails with java.lang.NullPointerException
         type: 'github',
         // adds link to GitHub Actions Run
         name: 'GitHub Actions',
-        buildName: `GitHub Actions Run ${runId}`,
+        buildName: `Run ${runUniqueId}`,
         buildUrl,
         // required to open previous report in TREND
         reportUrl,
@@ -10181,7 +10181,7 @@ try {
     const reportDir = `${reportBaseDir}/${runUniqueId}`;
     // urls
     const githubActionRunUrl = `https://github.com/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.owner}/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.repo}/actions/runs/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId}`;
-    const ghPagesUrl = `https://${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.owner}.github.io`;
+    const ghPagesUrl = `https://${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.owner}.github.io/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.repo}`;
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`;
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`;
     // log
@@ -10205,9 +10205,9 @@ try {
         await _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true });
     }
     await writeExecutorJson(sourceReportDir, {
-        buildOrder: runTimestamp,
+        runUniqueId,
+        buildOrder: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId,
         buildUrl: githubActionRunUrl,
-        runId: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId,
         reportUrl: ghPagesReportDir,
     });
     await spawnAllure(sourceReportDir, reportDir);

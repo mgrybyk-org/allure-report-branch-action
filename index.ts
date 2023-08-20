@@ -13,12 +13,12 @@ const writeExecutorJson = async (
     sourceReportDir: string,
     {
         buildUrl,
-        runId,
         buildOrder,
         reportUrl,
+        runUniqueId,
     }: {
         buildUrl: string
-        runId: number
+        runUniqueId: string
         buildOrder: number
         reportUrl: string
     }
@@ -29,7 +29,7 @@ const writeExecutorJson = async (
         type: 'github',
         // adds link to GitHub Actions Run
         name: 'GitHub Actions',
-        buildName: `GitHub Actions Run ${runId}`,
+        buildName: `Run ${runUniqueId}`,
         buildUrl,
         // required to open previous report in TREND
         reportUrl,
@@ -118,7 +118,7 @@ try {
     const reportDir = `${reportBaseDir}/${runUniqueId}`
     // urls
     const githubActionRunUrl = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${github.context.runId}`
-    const ghPagesUrl = `https://${github.context.repo.owner}.github.io`
+    const ghPagesUrl = `https://${github.context.repo.owner}.github.io/${github.context.repo.repo}`
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`
 
@@ -146,9 +146,9 @@ try {
         await io.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true })
     }
     await writeExecutorJson(sourceReportDir, {
-        buildOrder: runTimestamp,
+        runUniqueId,
+        buildOrder: github.context.runId,
         buildUrl: githubActionRunUrl,
-        runId: github.context.runId,
         reportUrl: ghPagesReportDir,
     })
     await spawnAllure(sourceReportDir, reportDir)

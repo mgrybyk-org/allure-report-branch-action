@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-  <title>Allure Reports</title>
   <head>
     <meta charset="utf-8" />
     <title>Allure Reports</title>
@@ -17,10 +16,10 @@
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
       }
       #allureTable tbody tr.test-fail {
-        background-color: #a51515;
+        background-color: #fe988f;
       }
       #allureTable tbody tr.test-pass {
-        background-color: #008000;
+        background-color: #6be781;
       }
       #allureTable tbody tr.test-unknown {
         background-color: #bababa;
@@ -30,6 +29,9 @@
         color: #ffffff;
         text-align: left;
       }
+      #allureTable thead th:nth-child(1) {
+        min-width: 80px;
+      }
       #allureTable th,
       #allureTable td {
         padding: 12px 15px;
@@ -38,7 +40,8 @@
         border-bottom: 1px solid #dddddd;
       }
       #allureTable tbody tr:hover {
-        background-color: #b7d2f3;
+        filter: brightness(125%);
+        transition: filter 0.15s ease-in-out;
       }
       #allureTable tfoot tr {
         border-top: 2px solid #4c90e2;
@@ -73,11 +76,24 @@
       return row
     }
 
+    const formatDate = (ts) => {
+      let dateTime = new Date(ts).toISOString().replace('T', ' ')
+      dateTime = dateTime.substring(0, dateTime.indexOf('.'))
+      return dateTime
+    }
+
+    const formatDuration = (dur) => {
+      const seconds = Math.round(dur / 1000)
+      const minutes = Math.floor(seconds / 60)
+      const secondsRemainder = seconds - minutes * 60
+      return `${minutes}m ${secondsRemainder}s`
+    }
+
     const allureTable = document.getElementById('allureTable')
 
     // header data
     const allureTableHeader = allureTable.getElementsByTagName('thead')[0]
-    const headers = ['Date', 'Passed', 'Failed', 'Skipped', 'Total', 'Duration', 'Link'].map((t) => document.createTextNode(t))
+    const headers = ['Date', 'Pass', 'Fail', 'Skip', 'Total', 'Duration', 'Link'].map((t) => document.createTextNode(t))
     allureTableHeader.appendChild(createTr(headers, 'th'))
 
     // body data
@@ -97,12 +113,12 @@
         json.forEach((r) => {
           const rowData = []
 
-          rowData.push(document.createTextNode(new Date(r.timestamp).toISOString().replace('T', ' ')))
+          rowData.push(document.createTextNode(formatDate(r.timestamp)))
           rowData.push(document.createTextNode(r.summary.statistic.passed))
           rowData.push(document.createTextNode(r.summary.statistic.failed + r.summary.statistic.broken))
           rowData.push(document.createTextNode(r.summary.statistic.skipped))
           rowData.push(document.createTextNode(r.summary.statistic.total))
-          rowData.push(document.createTextNode(r.summary.time.sumDuration))
+          rowData.push(document.createTextNode(formatDuration(r.summary.time.sumDuration)))
 
           const link = document.createElement('a')
           link.href = `./${r.runUniqueId}`

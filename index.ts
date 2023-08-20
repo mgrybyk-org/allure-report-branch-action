@@ -145,19 +145,20 @@ try {
     if (lastRunId) {
         await io.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true })
     }
-    console.log('before writeExecutorJson')
     await writeExecutorJson(sourceReportDir, {
         buildOrder: runTimestamp,
         buildUrl: githubActionRunUrl,
         runId: github.context.runId,
         reportUrl: ghPagesReportDir,
     })
-    console.log('after writeExecutorJson')
     await spawnAllure(sourceReportDir, reportDir)
+    console.log('111')
     await updateDataJson(reportBaseDir, reportDir, github.context.runId, runTimestamp)
+    console.log('222')
     // write index.html to show allure records
     // await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
     await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
+    console.log('333')
 } catch (error) {
     console.log(error)
     core.setFailed(error.message)

@@ -1,6 +1,8 @@
 name: Test Action
 
-on: [push]
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   html_report_test:
@@ -35,6 +37,7 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           repository: gh-pages-dir # path to checked out gh-pages branch
+
 
   # allure_report_test:
   #   runs-on: ubuntu-latest

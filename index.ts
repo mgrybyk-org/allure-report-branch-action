@@ -25,6 +25,8 @@ const writeExecutorJson = async (
 ) => {
     const dataFile = `${sourceReportDir}/executor.json`
     const dataJson: AllureExecutor = {
+        // type is required, otherwise allure fails with java.lang.NullPointerException
+        type: 'github',
         // adds link to GitHub Actions Run
         name: 'GitHub Actions',
         buildName: `GitHub Actions Run ${runId}`,
@@ -37,13 +39,11 @@ const writeExecutorJson = async (
 }
 
 const spawnAllure = async (allureResultsDir: string, allureReportDir: string) => {
-    const allureChildProcess = child_process.spawn('/allure-commandline/bin/allure', [
-        'generate',
-        '--clean',
-        allureResultsDir,
-        '-o',
-        allureReportDir,
-    ])
+    const allureChildProcess = child_process.spawn(
+        '/allure-commandline/bin/allure',
+        ['generate', '--clean', allureResultsDir, '-o', allureReportDir],
+        { stdio: 'inherit' }
+    )
     const generation = new Promise<void>((resolve, reject) => {
         allureChildProcess.once('error', reject)
         allureChildProcess.once('exit', (code: unknown) => (code === 0 ? resolve() : reject(code)))
@@ -152,13 +152,10 @@ try {
         reportUrl: ghPagesReportDir,
     })
     await spawnAllure(sourceReportDir, reportDir)
-    console.log('111')
     await updateDataJson(reportBaseDir, reportDir, github.context.runId, runTimestamp)
-    console.log('222')
     // write index.html to show allure records
     // await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
     await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
-    console.log('333')
 } catch (error) {
     console.log(error)
     core.setFailed(error.message)

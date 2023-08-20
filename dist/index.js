@@ -10103,6 +10103,8 @@ const getBranchName = (gitRef) => gitRef.replace('refs/heads/', '');
 const writeExecutorJson = async (sourceReportDir, { buildUrl, runId, buildOrder, reportUrl, }) => {
     const dataFile = `${sourceReportDir}/executor.json`;
     const dataJson = {
+        // type is required, otherwise allure fails with java.lang.NullPointerException
+        type: 'github',
         // adds link to GitHub Actions Run
         name: 'GitHub Actions',
         buildName: `GitHub Actions Run ${runId}`,
@@ -10114,13 +10116,7 @@ const writeExecutorJson = async (sourceReportDir, { buildUrl, runId, buildOrder,
     await fs_promises__WEBPACK_IMPORTED_MODULE_4__.writeFile(dataFile, JSON.stringify(dataJson, null, 2));
 };
 const spawnAllure = async (allureResultsDir, allureReportDir) => {
-    const allureChildProcess = child_process__WEBPACK_IMPORTED_MODULE_3__.spawn('/allure-commandline/bin/allure', [
-        'generate',
-        '--clean',
-        allureResultsDir,
-        '-o',
-        allureReportDir,
-    ]);
+    const allureChildProcess = child_process__WEBPACK_IMPORTED_MODULE_3__.spawn('/allure-commandline/bin/allure', ['generate', '--clean', allureResultsDir, '-o', allureReportDir], { stdio: 'inherit' });
     const generation = new Promise((resolve, reject) => {
         allureChildProcess.once('error', reject);
         allureChildProcess.once('exit', (code) => (code === 0 ? resolve() : reject(code)));
@@ -10215,13 +10211,10 @@ try {
         reportUrl: ghPagesReportDir,
     });
     await spawnAllure(sourceReportDir, reportDir);
-    console.log('111');
     await updateDataJson(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
-    console.log('222');
     // write index.html to show allure records
     // await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
     await writeLastRunId(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
-    console.log('333');
 }
 catch (error) {
     console.log(error);

@@ -42,6 +42,7 @@ interface LastRunJson {
 }
 
 interface AllureExecutor {
+    type: 'github'
     name: string
     buildName: string
     buildUrl: string

@@ -5,6 +5,7 @@ import * as child_process from 'child_process'
 import * as fs from 'fs/promises'
 import { isFileExist } from './src/isFileExists.js'
 import { writeFolderListing } from './src/writeFolderListing.js'
+import { allureReport } from './src/report_allure.js'
 
 const baseDir = 'allure-action'
 const getBranchName = (gitRef: string) => gitRef.replace('refs/heads/', '')
@@ -71,7 +72,7 @@ const writeLastRunId = async (reportBaseDir: string, runId: number, runTimestamp
     await fs.writeFile(dataFile, JSON.stringify(dataJson, null, 2))
 }
 
-const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: number, runTimestamp: number) => {
+const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: number, runUniqueId: string) => {
     const summaryJson: AllureSummaryJson = JSON.parse((await fs.readFile(`${reportDir}/widgets/summary.json`)).toString('utf-8'))
     const dataFile = `${reportBaseDir}/data.json`
     let dataJson: AllureRecord[]
@@ -86,7 +87,7 @@ const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: n
         summaryJson.statistic.broken + summaryJson.statistic.failed > 0 ? 'FAIL' : summaryJson.statistic.passed > 0 ? 'PASS' : 'UNKNOWN'
     const record: AllureRecord = {
         runId,
-        runTimestamp,
+        runUniqueId,
         testResult,
         timestamp: summaryJson.time.start,
         summary: {
@@ -152,9 +153,8 @@ try {
         reportUrl: ghPagesReportDir,
     })
     await spawnAllure(sourceReportDir, reportDir)
-    await updateDataJson(reportBaseDir, reportDir, github.context.runId, runTimestamp)
-    // write index.html to show allure records
-    // await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
+    await updateDataJson(reportBaseDir, reportDir, github.context.runId, runUniqueId)
+    await fs.writeFile(`${reportBaseDir}/index.html`, allureReport)
     await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
 } catch (error) {
     console.log(error)

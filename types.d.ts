@@ -21,7 +21,7 @@ type AllureRecordTestResult = 'PASS' | 'FAIL' | 'UNKNOWN'
 interface AllureRecord {
     timestamp: number
     runId: number
-    runTimestamp: number
+    runUniqueId: string
     testResult: AllureRecordResult
     summary: {
         statistic: AllureSummaryStatistic

@@ -10208,12 +10208,14 @@ try {
     if (lastRunId) {
         await _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true });
     }
+    console.log('before writeExecutorJson');
     await writeExecutorJson(sourceReportDir, {
         buildOrder: runTimestamp,
         buildUrl: githubActionRunUrl,
         runId: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId,
         reportUrl: ghPagesReportDir,
     });
+    console.log('after writeExecutorJson');
     await spawnAllure(sourceReportDir, reportDir);
     await updateDataJson(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
     // write index.html to show allure records
@@ -10221,6 +10223,7 @@ try {
     await writeLastRunId(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
 }
 catch (error) {
+    console.log(error);
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
 }
 

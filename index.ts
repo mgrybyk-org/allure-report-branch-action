@@ -30,21 +30,21 @@ const getLastRunId = async (reportBaseDir: string) => {
 
     if (await isFileExist(dataFile)) {
         const lastRun: LastRunJson = JSON.parse((await fs.readFile(dataFile)).toString('utf-8'))
-        return `${lastRun.runId}_${lastRun.runNumber}`
+        return `${lastRun.runId}_${lastRun.runTimestamp}`
     } else {
         return null
     }
 }
 
-const writeLastRunId = async (reportBaseDir: string, runId: number, runNumber: number) => {
+const writeLastRunId = async (reportBaseDir: string, runId: number, runTimestamp: number) => {
     const dataFile = `${reportBaseDir}/lastRun.json`
 
-    const dataJson: LastRunJson = { runId, runNumber }
+    const dataJson: LastRunJson = { runId, runTimestamp }
 
     await fs.writeFile(dataFile, JSON.stringify(dataJson, null, 2))
 }
 
-const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: number, runNumber: number) => {
+const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: number, runTimestamp: number) => {
     const summaryJson: AllureSummaryJson = JSON.parse((await fs.readFile(`${reportDir}/widgets/summary.json`)).toString('utf-8'))
     const dataFile = `${reportBaseDir}/data.json`
     let dataJson: AllureRecord[]
@@ -59,7 +59,7 @@ const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: n
         summaryJson.statistic.broken + summaryJson.statistic.failed > 0 ? 'FAIL' : summaryJson.statistic.passed > 0 ? 'PASS' : 'UNKNOWN'
     const record: AllureRecord = {
         runId,
-        runNumber,
+        runTimestamp,
         testResult,
         timestamp: summaryJson.time.start,
         summary: {
@@ -72,13 +72,19 @@ const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: n
 }
 
 try {
+    const runTimestamp = Date.now()
     // vars
     const sourceReportDir = core.getInput('report_dir')
     const ghPagesPath = core.getInput('gh_pages')
     const reportId = core.getInput('report_id')
     const branchName = getBranchName(github.context.ref)
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`
-    const reportDir = `${reportBaseDir}/${github.context.runId}_${github.context.runNumber}`
+    /**
+     * `runId` is unique but won't change on job re-run
+     * `runNumber` is not unique and resets from time to time
+     * that's why the `runTimestamp` is used to guarantee uniqueness
+     */
+    const reportDir = `${reportBaseDir}/${github.context.runId}_${runTimestamp}`
 
     // log
     console.table({ ghPagesPath, sourceReportDir, reportId, branchName, reportBaseDir, reportDir, gitref: github.context.ref })
@@ -104,10 +110,10 @@ try {
         await io.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true })
     }
     await spawnAllure(sourceReportDir, reportDir)
-    await updateDataJson(reportBaseDir, reportDir, github.context.runId, github.context.runNumber)
+    await updateDataJson(reportBaseDir, reportDir, github.context.runId, runTimestamp)
     // write index.html to show allure records
     // await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
-    await writeLastRunId(reportBaseDir, github.context.runId, github.context.runNumber)
+    await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
 } catch (error) {
     core.setFailed(error.message)
 }

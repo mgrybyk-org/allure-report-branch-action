@@ -10118,18 +10118,18 @@ const getLastRunId = async (reportBaseDir) => {
     const dataFile = `${reportBaseDir}/lastRun.json`;
     if (await (0,_src_isFileExists_js__WEBPACK_IMPORTED_MODULE_5__/* .isFileExist */ .e)(dataFile)) {
         const lastRun = JSON.parse((await fs_promises__WEBPACK_IMPORTED_MODULE_4__.readFile(dataFile)).toString('utf-8'));
-        return `${lastRun.runId}_${lastRun.runNumber}`;
+        return `${lastRun.runId}_${lastRun.runTimestamp}`;
     }
     else {
         return null;
     }
 };
-const writeLastRunId = async (reportBaseDir, runId, runNumber) => {
+const writeLastRunId = async (reportBaseDir, runId, runTimestamp) => {
     const dataFile = `${reportBaseDir}/lastRun.json`;
-    const dataJson = { runId, runNumber };
+    const dataJson = { runId, runTimestamp };
     await fs_promises__WEBPACK_IMPORTED_MODULE_4__.writeFile(dataFile, JSON.stringify(dataJson, null, 2));
 };
-const updateDataJson = async (reportBaseDir, reportDir, runId, runNumber) => {
+const updateDataJson = async (reportBaseDir, reportDir, runId, runTimestamp) => {
     const summaryJson = JSON.parse((await fs_promises__WEBPACK_IMPORTED_MODULE_4__.readFile(`${reportDir}/widgets/summary.json`)).toString('utf-8'));
     const dataFile = `${reportBaseDir}/data.json`;
     let dataJson;
@@ -10142,7 +10142,7 @@ const updateDataJson = async (reportBaseDir, reportDir, runId, runNumber) => {
     const testResult = summaryJson.statistic.broken + summaryJson.statistic.failed > 0 ? 'FAIL' : summaryJson.statistic.passed > 0 ? 'PASS' : 'UNKNOWN';
     const record = {
         runId,
-        runNumber,
+        runTimestamp,
         testResult,
         timestamp: summaryJson.time.start,
         summary: {
@@ -10154,13 +10154,14 @@ const updateDataJson = async (reportBaseDir, reportDir, runId, runNumber) => {
     await fs_promises__WEBPACK_IMPORTED_MODULE_4__.writeFile(dataFile, JSON.stringify(dataJson, null, 2));
 };
 try {
+    const runTimestamp = Date.now();
     // vars
     const sourceReportDir = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_dir');
     const ghPagesPath = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('gh_pages');
     const reportId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_id');
     const branchName = getBranchName(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref);
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`;
-    const reportDir = `${reportBaseDir}/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId}_${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runNumber}`;
+    const reportDir = `${reportBaseDir}/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId}_${runTimestamp}`;
     // log
     console.table({ ghPagesPath, sourceReportDir, reportId, branchName, reportBaseDir, reportDir, gitref: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref });
     // context
@@ -10182,10 +10183,10 @@ try {
         await _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true });
     }
     await spawnAllure(sourceReportDir, reportDir);
-    await updateDataJson(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runNumber);
+    await updateDataJson(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
     // write index.html to show allure records
     // await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
-    await writeLastRunId(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runNumber);
+    await writeLastRunId(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
 }
 catch (error) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);

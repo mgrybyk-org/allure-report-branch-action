@@ -9,6 +9,24 @@ import { writeFolderListing } from './src/writeFolderListing.js'
 const baseDir = 'allure-action'
 const getBranchName = (gitRef: string) => gitRef.replace('refs/heads/', '')
 
+// const writeExecutorJson = async (sourceReportDir: string, opts: AllureExecutor) => {
+//     const dataFile = `${sourceReportDir}/executor.json`
+//     const { name } = opts
+//     let dataJson: {
+//         name,
+//         buildUrl: '',
+//         buildName: '',
+//         // required to open previous report in TREND
+//         reportUrl: '',
+//     }
+
+//         echo '{"name":"GitHub Actions","type":"github","reportName":"Allure Report with history",' > executor.json
+//     echo "\"url\":\"${GITHUB_PAGES_WEBSITE_URL}\"," >> executor.json # ???
+//     echo "\"reportUrl\":\"${GITHUB_PAGES_WEBSITE_URL}/${INPUT_GITHUB_RUN_NUM}/\"," >> executor.json
+//     echo "\"buildUrl\":\"https://github.com/${INPUT_GITHUB_REPO}/actions/runs/${INPUT_GITHUB_RUN_ID}\"," >> executor.json
+//     echo "\"buildName\":\"GitHub Actions Run #${INPUT_GITHUB_RUN_ID}\",\"buildOrder\":\"${INPUT_GITHUB_RUN_NUM}\"}" >> executor.json
+// }
+
 const spawnAllure = async (allureResultsDir: string, allureReportDir: string) => {
     const allureChildProcess = child_process.spawn('/allure-commandline/bin/allure', [
         'generate',
@@ -79,6 +97,9 @@ try {
     const reportId = core.getInput('report_id')
     const branchName = getBranchName(github.context.ref)
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`
+
+    github.context.repo.owner
+    github.context.repo.repo
     /**
      * `runId` is unique but won't change on job re-run
      * `runNumber` is not unique and resets from time to time
@@ -91,7 +112,7 @@ try {
     // context
     const toLog = { ...github.context } as Record<string, unknown>
     delete toLog.payload
-    console.log('toLog', toLog)
+    console.log('toLog', toLog, github.context.repo)
 
     // action
     await io.mkdirP(reportBaseDir)

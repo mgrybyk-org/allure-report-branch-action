@@ -40,3 +40,7 @@ interface LastRunJson {
     runId: number
     runTimestamp: number
 }
+
+interface AllureExecutor {
+    name: string
+}

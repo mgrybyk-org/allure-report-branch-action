@@ -10100,6 +10100,22 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 
 const baseDir = 'allure-action';
 const getBranchName = (gitRef) => gitRef.replace('refs/heads/', '');
+// const writeExecutorJson = async (sourceReportDir: string, opts: AllureExecutor) => {
+//     const dataFile = `${sourceReportDir}/executor.json`
+//     const { name } = opts
+//     let dataJson: {
+//         name,
+//         buildUrl: '',
+//         buildName: '',
+//         // required to open previous report in TREND
+//         reportUrl: '',
+//     }
+//         echo '{"name":"GitHub Actions","type":"github","reportName":"Allure Report with history",' > executor.json
+//     echo "\"url\":\"${GITHUB_PAGES_WEBSITE_URL}\"," >> executor.json # ???
+//     echo "\"reportUrl\":\"${GITHUB_PAGES_WEBSITE_URL}/${INPUT_GITHUB_RUN_NUM}/\"," >> executor.json
+//     echo "\"buildUrl\":\"https://github.com/${INPUT_GITHUB_REPO}/actions/runs/${INPUT_GITHUB_RUN_ID}\"," >> executor.json
+//     echo "\"buildName\":\"GitHub Actions Run #${INPUT_GITHUB_RUN_ID}\",\"buildOrder\":\"${INPUT_GITHUB_RUN_NUM}\"}" >> executor.json
+// }
 const spawnAllure = async (allureResultsDir, allureReportDir) => {
     const allureChildProcess = child_process__WEBPACK_IMPORTED_MODULE_3__.spawn('/allure-commandline/bin/allure', [
         'generate',
@@ -10161,13 +10177,20 @@ try {
     const reportId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_id');
     const branchName = getBranchName(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref);
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`;
+    _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.owner;
+    _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.repo;
+    /**
+     * `runId` is unique but won't change on job re-run
+     * `runNumber` is not unique and resets from time to time
+     * that's why the `runTimestamp` is used to guarantee uniqueness
+     */
     const reportDir = `${reportBaseDir}/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId}_${runTimestamp}`;
     // log
     console.table({ ghPagesPath, sourceReportDir, reportId, branchName, reportBaseDir, reportDir, gitref: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref });
     // context
     const toLog = { ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context };
     delete toLog.payload;
-    console.log('toLog', toLog);
+    console.log('toLog', toLog, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo);
     // action
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(reportBaseDir);
     // folder listing

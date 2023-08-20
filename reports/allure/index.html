@@ -92,7 +92,7 @@
 
         // footer data
         const allureTableFooter = allureTable.getElementsByTagName('tfoot')[0]
-        allureTableFooter.appendChild(createTr(['TOTAL', '', json.length].map((t) => document.createTextNode(t))))
+        allureTableFooter.appendChild(createTr(['TOTAL', '', '', '', '', '', json.length].map((t) => document.createTextNode(t))))
 
         json.forEach((r) => {
           const rowData = []

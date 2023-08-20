@@ -10087,8 +10087,11 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(2081);
 /* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(child_process__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _src_isFileExists_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(2139);
-/* harmony import */ var _src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(4362);
+/* harmony import */ var fs_promises__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(3292);
+/* harmony import */ var fs_promises__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(fs_promises__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _src_isFileExists_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(2139);
+/* harmony import */ var _src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(4362);
+
 
 
 
@@ -10111,6 +10114,43 @@ const spawnAllure = async (allureResultsDir, allureReportDir) => {
     });
     return generation;
 };
+const getLastRunId = async (reportBaseDir) => {
+    const dataFile = `${reportBaseDir}/lastRun.json`;
+    if (await (0,_src_isFileExists_js__WEBPACK_IMPORTED_MODULE_5__/* .isFileExist */ .e)(dataFile)) {
+        const lastRun = JSON.parse((await fs_promises__WEBPACK_IMPORTED_MODULE_4__.readFile(dataFile)).toString('utf-8'));
+        return lastRun.runId;
+    }
+    else {
+        return null;
+    }
+};
+const writeLastRunId = async (reportBaseDir, runId) => {
+    const dataFile = `${reportBaseDir}/lastRun.json`;
+    await fs_promises__WEBPACK_IMPORTED_MODULE_4__.writeFile(dataFile, JSON.stringify({ runId }, null, 2));
+};
+const updateDataJson = async (reportBaseDir, reportDir, runId) => {
+    const summaryJson = JSON.parse((await fs_promises__WEBPACK_IMPORTED_MODULE_4__.readFile(`${reportDir}/widgets/summary.json`)).toString('utf-8'));
+    const dataFile = `${reportBaseDir}/data.json`;
+    let dataJson;
+    if (await (0,_src_isFileExists_js__WEBPACK_IMPORTED_MODULE_5__/* .isFileExist */ .e)(dataFile)) {
+        dataJson = JSON.parse((await fs_promises__WEBPACK_IMPORTED_MODULE_4__.readFile(dataFile)).toString('utf-8'));
+    }
+    else {
+        dataJson = [];
+    }
+    const testResult = summaryJson.statistic.broken + summaryJson.statistic.failed > 0 ? 'FAIL' : summaryJson.statistic.passed > 0 ? 'PASS' : 'UNKNOWN';
+    const record = {
+        runId,
+        testResult,
+        timestamp: summaryJson.time.start,
+        summary: {
+            statistic: summaryJson.statistic,
+            time: summaryJson.time,
+        },
+    };
+    dataJson.unshift(record);
+    await fs_promises__WEBPACK_IMPORTED_MODULE_4__.writeFile(dataFile, JSON.stringify(dataJson, null, 2));
+};
 try {
     // vars
     const sourceReportDir = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_dir');
@@ -10129,14 +10169,21 @@ try {
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(reportBaseDir);
     // folder listing
     // do noot overwrite index.html in the folder root to avoid conflicts
-    if (!(await (0,_src_isFileExists_js__WEBPACK_IMPORTED_MODULE_4__/* .isFileExist */ .e)(`${ghPagesPath}/index.html`))) {
-        await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_5__/* .writeFolderListing */ .l)(ghPagesPath, '.');
+    if (!(await (0,_src_isFileExists_js__WEBPACK_IMPORTED_MODULE_5__/* .isFileExist */ .e)(`${ghPagesPath}/index.html`))) {
+        await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_6__/* .writeFolderListing */ .l)(ghPagesPath, '.');
     }
-    await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_5__/* .writeFolderListing */ .l)(ghPagesPath, baseDir);
+    await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_6__/* .writeFolderListing */ .l)(ghPagesPath, baseDir);
     // process report
+    const lastRunId = await getLastRunId(reportBaseDir);
+    console.log('lastRunId', lastRunId);
+    if (lastRunId) {
+        await _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true });
+    }
     await spawnAllure(sourceReportDir, reportDir);
-    // generate index.html and data
-    await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_5__/* .writeFolderListing */ .l)(ghPagesPath, `${baseDir}/${branchName}`);
+    await updateDataJson(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId);
+    // write index.html to show allure records
+    // await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
+    await writeLastRunId(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId);
 }
 catch (error) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);

@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as io from '@actions/io'
 import * as child_process from 'child_process'
+import * as fs from 'fs/promises'
 import { isFileExist } from './src/isFileExists.js'
 import { writeFolderListing } from './src/writeFolderListing.js'
 
@@ -22,6 +23,49 @@ const spawnAllure = async (allureResultsDir: string, allureReportDir: string) =>
     })
 
     return generation
+}
+
+const getLastRunId = async (reportBaseDir: string) => {
+    const dataFile = `${reportBaseDir}/lastRun.json`
+
+    if (await isFileExist(dataFile)) {
+        const lastRun: LastRunJson = JSON.parse((await fs.readFile(dataFile)).toString('utf-8'))
+        return lastRun.runId
+    } else {
+        return null
+    }
+}
+
+const writeLastRunId = async (reportBaseDir: string, runId: number) => {
+    const dataFile = `${reportBaseDir}/lastRun.json`
+
+    await fs.writeFile(dataFile, JSON.stringify({ runId }, null, 2))
+}
+
+const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: number) => {
+    const summaryJson: AllureSummaryJson = JSON.parse((await fs.readFile(`${reportDir}/widgets/summary.json`)).toString('utf-8'))
+    const dataFile = `${reportBaseDir}/data.json`
+    let dataJson: AllureRecord[]
+
+    if (await isFileExist(dataFile)) {
+        dataJson = JSON.parse((await fs.readFile(dataFile)).toString('utf-8'))
+    } else {
+        dataJson = []
+    }
+
+    const testResult: AllureRecordTestResult =
+        summaryJson.statistic.broken + summaryJson.statistic.failed > 0 ? 'FAIL' : summaryJson.statistic.passed > 0 ? 'PASS' : 'UNKNOWN'
+    const record: AllureRecord = {
+        runId,
+        testResult,
+        timestamp: summaryJson.time.start,
+        summary: {
+            statistic: summaryJson.statistic,
+            time: summaryJson.time,
+        },
+    }
+    dataJson.unshift(record)
+    await fs.writeFile(dataFile, JSON.stringify(dataJson, null, 2))
 }
 
 try {
@@ -51,9 +95,16 @@ try {
     await writeFolderListing(ghPagesPath, baseDir)
 
     // process report
+    const lastRunId = await getLastRunId(reportBaseDir)
+    console.log('lastRunId', lastRunId)
+    if (lastRunId) {
+        await io.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true })
+    }
     await spawnAllure(sourceReportDir, reportDir)
-    // generate index.html and data
-    await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
+    await updateDataJson(reportBaseDir, reportDir, github.context.runId)
+    // write index.html to show allure records
+    // await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
+    await writeLastRunId(reportBaseDir, github.context.runId)
 } catch (error) {
     core.setFailed(error.message)
 }

@@ -43,4 +43,8 @@ interface LastRunJson {
 
 interface AllureExecutor {
     name: string
+    buildName: string
+    buildUrl: string
+    reportUrl: string
+    buildOrder: number
 }

@@ -10100,22 +10100,19 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 
 const baseDir = 'allure-action';
 const getBranchName = (gitRef) => gitRef.replace('refs/heads/', '');
-// const writeExecutorJson = async (sourceReportDir: string, opts: AllureExecutor) => {
-//     const dataFile = `${sourceReportDir}/executor.json`
-//     const { name } = opts
-//     let dataJson: {
-//         name,
-//         buildUrl: '',
-//         buildName: '',
-//         // required to open previous report in TREND
-//         reportUrl: '',
-//     }
-//         echo '{"name":"GitHub Actions","type":"github","reportName":"Allure Report with history",' > executor.json
-//     echo "\"url\":\"${GITHUB_PAGES_WEBSITE_URL}\"," >> executor.json # ???
-//     echo "\"reportUrl\":\"${GITHUB_PAGES_WEBSITE_URL}/${INPUT_GITHUB_RUN_NUM}/\"," >> executor.json
-//     echo "\"buildUrl\":\"https://github.com/${INPUT_GITHUB_REPO}/actions/runs/${INPUT_GITHUB_RUN_ID}\"," >> executor.json
-//     echo "\"buildName\":\"GitHub Actions Run #${INPUT_GITHUB_RUN_ID}\",\"buildOrder\":\"${INPUT_GITHUB_RUN_NUM}\"}" >> executor.json
-// }
+const writeExecutorJson = async (sourceReportDir, { buildUrl, runId, buildOrder, reportUrl, }) => {
+    const dataFile = `${sourceReportDir}/executor.json`;
+    const dataJson = {
+        // adds link to GitHub Actions Run
+        name: 'GitHub Actions',
+        buildName: `GitHub Actions Run ${runId}`,
+        buildUrl,
+        // required to open previous report in TREND
+        reportUrl,
+        buildOrder,
+    };
+    await fs_promises__WEBPACK_IMPORTED_MODULE_4__.writeFile(dataFile, JSON.stringify(dataJson, null, 2));
+};
 const spawnAllure = async (allureResultsDir, allureReportDir) => {
     const allureChildProcess = child_process__WEBPACK_IMPORTED_MODULE_3__.spawn('/allure-commandline/bin/allure', [
         'generate',
@@ -10184,7 +10181,13 @@ try {
      * `runNumber` is not unique and resets from time to time
      * that's why the `runTimestamp` is used to guarantee uniqueness
      */
-    const reportDir = `${reportBaseDir}/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId}_${runTimestamp}`;
+    const runUniqueId = `${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId}_${runTimestamp}`;
+    const reportDir = `${reportBaseDir}/${runUniqueId}`;
+    // urls
+    const githubActionRunUrl = `https://github.com/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.owner}/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.repo}/actions/runs/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId}`;
+    const ghPagesUrl = `https://${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.owner}.github.io`;
+    const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`;
+    const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`;
     // log
     console.table({ ghPagesPath, sourceReportDir, reportId, branchName, reportBaseDir, reportDir, gitref: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref });
     // context
@@ -10205,6 +10208,12 @@ try {
     if (lastRunId) {
         await _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true });
     }
+    await writeExecutorJson(sourceReportDir, {
+        buildOrder: runTimestamp,
+        buildUrl: githubActionRunUrl,
+        runId: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId,
+        reportUrl: ghPagesReportDir,
+    });
     await spawnAllure(sourceReportDir, reportDir);
     await updateDataJson(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
     // write index.html to show allure records

@@ -9,23 +9,32 @@ import { writeFolderListing } from './src/writeFolderListing.js'
 const baseDir = 'allure-action'
 const getBranchName = (gitRef: string) => gitRef.replace('refs/heads/', '')
 
-// const writeExecutorJson = async (sourceReportDir: string, opts: AllureExecutor) => {
-//     const dataFile = `${sourceReportDir}/executor.json`
-//     const { name } = opts
-//     let dataJson: {
-//         name,
-//         buildUrl: '',
-//         buildName: '',
-//         // required to open previous report in TREND
-//         reportUrl: '',
-//     }
-
-//         echo '{"name":"GitHub Actions","type":"github","reportName":"Allure Report with history",' > executor.json
-//     echo "\"url\":\"${GITHUB_PAGES_WEBSITE_URL}\"," >> executor.json # ???
-//     echo "\"reportUrl\":\"${GITHUB_PAGES_WEBSITE_URL}/${INPUT_GITHUB_RUN_NUM}/\"," >> executor.json
-//     echo "\"buildUrl\":\"https://github.com/${INPUT_GITHUB_REPO}/actions/runs/${INPUT_GITHUB_RUN_ID}\"," >> executor.json
-//     echo "\"buildName\":\"GitHub Actions Run #${INPUT_GITHUB_RUN_ID}\",\"buildOrder\":\"${INPUT_GITHUB_RUN_NUM}\"}" >> executor.json
-// }
+const writeExecutorJson = async (
+    sourceReportDir: string,
+    {
+        buildUrl,
+        runId,
+        buildOrder,
+        reportUrl,
+    }: {
+        buildUrl: string
+        runId: number
+        buildOrder: number
+        reportUrl: string
+    }
+) => {
+    const dataFile = `${sourceReportDir}/executor.json`
+    const dataJson: AllureExecutor = {
+        // adds link to GitHub Actions Run
+        name: 'GitHub Actions',
+        buildName: `GitHub Actions Run ${runId}`,
+        buildUrl,
+        // required to open previous report in TREND
+        reportUrl,
+        buildOrder,
+    }
+    await fs.writeFile(dataFile, JSON.stringify(dataJson, null, 2))
+}
 
 const spawnAllure = async (allureResultsDir: string, allureReportDir: string) => {
     const allureChildProcess = child_process.spawn('/allure-commandline/bin/allure', [
@@ -105,7 +114,13 @@ try {
      * `runNumber` is not unique and resets from time to time
      * that's why the `runTimestamp` is used to guarantee uniqueness
      */
-    const reportDir = `${reportBaseDir}/${github.context.runId}_${runTimestamp}`
+    const runUniqueId = `${github.context.runId}_${runTimestamp}`
+    const reportDir = `${reportBaseDir}/${runUniqueId}`
+    // urls
+    const githubActionRunUrl = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${github.context.runId}`
+    const ghPagesUrl = `https://${github.context.repo.owner}.github.io`
+    const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`
+    const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`
 
     // log
     console.table({ ghPagesPath, sourceReportDir, reportId, branchName, reportBaseDir, reportDir, gitref: github.context.ref })
@@ -130,6 +145,12 @@ try {
     if (lastRunId) {
         await io.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true })
     }
+    await writeExecutorJson(sourceReportDir, {
+        buildOrder: runTimestamp,
+        buildUrl: githubActionRunUrl,
+        runId: github.context.runId,
+        reportUrl: ghPagesReportDir,
+    })
     await spawnAllure(sourceReportDir, reportDir)
     await updateDataJson(reportBaseDir, reportDir, github.context.runId, runTimestamp)
     // write index.html to show allure records

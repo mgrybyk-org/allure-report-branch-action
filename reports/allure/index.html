@@ -97,7 +97,7 @@
         json.forEach((r) => {
           const rowData = []
 
-          rowData.push(document.createTextNode(new Date(r.timestamp).toISOString().replace('T', '')))
+          rowData.push(document.createTextNode(new Date(r.timestamp).toISOString().replace('T', ' ')))
           rowData.push(document.createTextNode(r.summary.statistic.passed))
           rowData.push(document.createTextNode(r.summary.statistic.failed + r.summary.statistic.broken))
           rowData.push(document.createTextNode(r.summary.statistic.skipped))

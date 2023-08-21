@@ -31,7 +31,10 @@ try {
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`
 
-    console.log(process.env)
+    console.log('env', process.env)
+
+    console.log('base', github.context.payload.pull_request?.base)
+    console.log('head', github.context.payload.pull_request?.head)
 
     // log
     console.log({

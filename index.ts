@@ -2,7 +2,15 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as io from '@actions/io'
 import { writeFolderListing } from './src/writeFolderListing.js'
-import { getLastRunId, writeExecutorJson, spawnAllure, writeLastRunId, updateDataJson, writeAllureListing } from './src/allure.js'
+import {
+    getLastRunId,
+    writeExecutorJson,
+    spawnAllure,
+    writeLastRunId,
+    updateDataJson,
+    writeAllureListing,
+    getTestResultIcon,
+} from './src/allure.js'
 import { getBranchName, shouldWriteRootHtml } from './src/helpers.js'
 
 const baseDir = 'allure-action'
@@ -14,7 +22,7 @@ try {
     const sourceReportDir = core.getInput('report_dir')
     const ghPagesPath = core.getInput('gh_pages')
     const reportId = core.getInput('report_id')
-    const branchName = getBranchName(github.context.ref)
+    const branchName = getBranchName(github.context.ref, github.context.payload.pull_request)
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`
 
     /**
@@ -45,8 +53,6 @@ try {
     })
 
     // action
-    core.setOutput('report_url', ghPagesReportDir)
-
     await io.mkdirP(reportBaseDir)
 
     // folder listing
@@ -68,9 +74,15 @@ try {
         reportUrl: ghPagesReportDir,
     })
     await spawnAllure(sourceReportDir, reportDir)
-    await updateDataJson(reportBaseDir, reportDir, github.context.runId, runUniqueId)
+    const testResult = await updateDataJson(reportBaseDir, reportDir, github.context.runId, runUniqueId)
     await writeAllureListing(reportBaseDir)
     await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
+
+    // outputs
+    core.setOutput('report_url', ghPagesReportDir)
+    core.setOutput('report_history_url', ghPagesBaseDir)
+    core.setOutput('test_result', testResult)
+    core.setOutput('test_result_icon', getTestResultIcon(testResult))
 } catch (error) {
     core.setFailed(error.message)
 }

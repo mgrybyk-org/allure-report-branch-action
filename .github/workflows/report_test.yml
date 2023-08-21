@@ -10,11 +10,13 @@ jobs:
   test:
     timeout-minutes: 180
     runs-on: ubuntu-latest
-    name: publish allure report
+    name: Build, Test, Report
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
       contents: write
+      # required by https://github.com/thollander/actions-comment-pull-request
+      pull-requests: write
 
     steps:
       # To use this repository's private action,
@@ -28,7 +30,7 @@ jobs:
 
       - name: Update screenshots in PRs
         if: github.event_name == 'pull_request'
-        run: npm run e2e -- -u
+        run: npm run e2e -- --update-snapshots
       - name: git commit and push
         if: github.event_name == 'pull_request'
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -53,14 +55,25 @@ jobs:
         uses: ./ # Uses an action in the root directory
         if: always()
         continue-on-error: true
+        id: self_test # used in comment to PR
         with:
           report_id: 'self-test'
           gh_pages: 'gh-pages-dir'
           report_dir: 'allure-results'
 
-      # Use the output from the `hello` step
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: always()
-        continue-on-error: true
         with:
           repository: gh-pages-dir # path to checked out gh-pages branch
+          branch: gh-pages
+          skip_checkout: true
+
+      - name: Comment PR with Allure Report link
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            ${{ steps.self_test.outputs.test_result_icon }} [Allure Report](${{ steps.self_test.outputs.report_url }}) | [History](${{ steps.self_test.outputs.report_history_url }})
+          comment_tag: allure_self_test
+          mode: recreate

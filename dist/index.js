@@ -10101,7 +10101,7 @@ try {
     const sourceReportDir = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_dir');
     const ghPagesPath = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('gh_pages');
     const reportId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_id');
-    const branchName = (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .getBranchName */ .L)(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref);
+    const branchName = (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .getBranchName */ .L)(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request);
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`;
     /**
      * `runId` is unique but won't change on job re-run
@@ -10128,7 +10128,6 @@ try {
         report_url: ghPagesReportDir,
     });
     // action
-    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_url', ghPagesReportDir);
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(reportBaseDir);
     // folder listing
     if (await (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .shouldWriteRootHtml */ .z)(ghPagesPath)) {
@@ -10148,9 +10147,14 @@ try {
         reportUrl: ghPagesReportDir,
     });
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .spawnAllure */ .Mo)(sourceReportDir, reportDir);
-    await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .updateDataJson */ .V0)(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runUniqueId);
+    const testResult = await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .updateDataJson */ .V0)(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runUniqueId);
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .writeAllureListing */ .rF)(reportBaseDir);
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .writeLastRunId */ .j9)(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
+    // outputs
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_url', ghPagesReportDir);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_history_url', ghPagesBaseDir);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result', testResult);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result_icon', (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .getTestResultIcon */ .RG)(testResult));
 }
 catch (error) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
@@ -10168,6 +10172,7 @@ __webpack_async_result__();
 // EXPORTS
 __nccwpck_require__.d(__webpack_exports__, {
   "k4": () => (/* binding */ getLastRunId),
+  "RG": () => (/* binding */ getTestResultIcon),
   "Mo": () => (/* binding */ spawnAllure),
   "V0": () => (/* binding */ updateDataJson),
   "rF": () => (/* binding */ writeAllureListing),
@@ -10251,6 +10256,16 @@ const updateDataJson = async (reportBaseDir, reportDir, runId, runUniqueId) => {
     };
     dataJson.unshift(record);
     await promises_.writeFile(dataFile, JSON.stringify(dataJson, null, 2));
+    return testResult;
+};
+const getTestResultIcon = (testResult) => {
+    if (testResult === 'PASS') {
+        return '✅';
+    }
+    if (testResult === 'FAIL') {
+        return '❌';
+    }
+    return '❔';
 };
 const writeAllureListing = async (reportBaseDir) => promises_.writeFile(`${reportBaseDir}/index.html`, allureReport);
 
@@ -10266,7 +10281,10 @@ const writeAllureListing = async (reportBaseDir) => promises_.writeFile(`${repor
 /* harmony export */ });
 /* harmony import */ var _isFileExists_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2139);
 
-const getBranchName = (gitRef) => gitRef.replace('refs/heads/', '');
+const getBranchName = (gitRef, pull_request) => {
+    const branchName = pull_request ? pull_request.head.ref : gitRef.replace('refs/heads/', '');
+    return branchName.replaceAll('/', '_').replaceAll('.', '_');
+};
 const shouldWriteRootHtml = async (ghPagesPath) => {
     // do noot overwrite index.html in the folder root to avoid conflicts
     const isRootHtmlExisting = await (0,_isFileExists_js__WEBPACK_IMPORTED_MODULE_0__/* .isFileExist */ .e)(`${ghPagesPath}/index.html`);

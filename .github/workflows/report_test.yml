@@ -23,11 +23,16 @@ jobs:
 
       - run: npm ci
       - run: npx playwright install --with-deps
-      - run: npx playwright test
 
       - name: Update screenshots in PRs
         if: github.event_name == 'pull_request'
         run: npm run e2e -- -u
+      - name: git add
+        if: github.event_name == 'pull_request'
+        run: git add "tests/**/*.png" || echo nothing to update
+      - name: git commit and push
+        if: github.event_name == 'pull_request'
+        uses: stefanzweifel/git-auto-commit-action@v4
 
       - name: Do not update screenshots if not PR
         if: github.event_name != 'pull_request'
@@ -43,6 +48,8 @@ jobs:
 
       - name: Local Allure Report Action
         uses: ./ # Uses an action in the root directory
+        if: always()
+        continue-on-error: true
         with:
           report_id: 'self-test'
           gh_pages: 'gh-pages-dir'
@@ -50,5 +57,7 @@ jobs:
 
       # Use the output from the `hello` step
       - uses: stefanzweifel/git-auto-commit-action@v4
+        if: always()
+        continue-on-error: true
         with:
           repository: gh-pages-dir # path to checked out gh-pages branch

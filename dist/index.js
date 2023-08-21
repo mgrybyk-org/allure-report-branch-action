@@ -10115,7 +10115,7 @@ try {
     const ghPagesUrl = `https://${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.owner}.github.io/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.repo}`;
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`;
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`;
-    console.log(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context);
+    console.log(process.env);
     // log
     console.log({
         report_dir: sourceReportDir,

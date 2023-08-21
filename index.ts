@@ -31,7 +31,7 @@ try {
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`
 
-    console.log(github.context)
+    console.log(process.env)
 
     // log
     console.log({

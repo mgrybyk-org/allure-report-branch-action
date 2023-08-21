@@ -14,7 +14,7 @@ try {
     const sourceReportDir = core.getInput('report_dir')
     const ghPagesPath = core.getInput('gh_pages')
     const reportId = core.getInput('report_id')
-    const branchName = getBranchName(github.context.ref)
+    const branchName = getBranchName(github.context.ref, github.context.payload.pull_request)
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`
 
     /**
@@ -30,11 +30,6 @@ try {
     const ghPagesUrl = `https://${github.context.repo.owner}.github.io/${github.context.repo.repo}`
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`
-
-    console.log('env', process.env)
-
-    console.log('base', github.context.payload.pull_request?.base)
-    console.log('head', github.context.payload.pull_request?.head)
 
     // log
     console.log({

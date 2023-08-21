@@ -10101,7 +10101,7 @@ try {
     const sourceReportDir = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_dir');
     const ghPagesPath = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('gh_pages');
     const reportId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_id');
-    const branchName = (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .getBranchName */ .L)(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref);
+    const branchName = (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .getBranchName */ .L)(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request);
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`;
     /**
      * `runId` is unique but won't change on job re-run
@@ -10115,9 +10115,6 @@ try {
     const ghPagesUrl = `https://${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.owner}.github.io/${_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo.repo}`;
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`;
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`;
-    console.log('env', process.env);
-    console.log('base', _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request?.base);
-    console.log('head', _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request?.head);
     // log
     console.log({
         report_dir: sourceReportDir,
@@ -10269,7 +10266,10 @@ const writeAllureListing = async (reportBaseDir) => promises_.writeFile(`${repor
 /* harmony export */ });
 /* harmony import */ var _isFileExists_js__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2139);
 
-const getBranchName = (gitRef) => gitRef.replace('refs/heads/', '');
+const getBranchName = (gitRef, pull_request) => {
+    const branchName = pull_request ? pull_request.head.ref : gitRef.replace('refs/heads/', '');
+    return branchName.replaceAll('/', '_').replaceAll('.', '_');
+};
 const shouldWriteRootHtml = async (ghPagesPath) => {
     // do noot overwrite index.html in the folder root to avoid conflicts
     const isRootHtmlExisting = await (0,_isFileExists_js__WEBPACK_IMPORTED_MODULE_0__/* .isFileExist */ .e)(`${ghPagesPath}/index.html`);

@@ -76,3 +76,20 @@ steps:
 ![Allure Reports History](docs/allure_history.png "Allure Reports History")
 ![PR Comment](docs/pr_comment.png "PR Comment")
 ![Allure Report Trend](docs/allure_trend.png "Allure Report Trend")
+
+## Troubleshooting
+
+### Issues on push to gh-pages
+
+Log `! [rejected]        HEAD -> gh-pages (non-fast-forward)`
+
+Do not run your workflow concurrently
+```yaml
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+```  
+
+## Upcoming features
+
+- cleanup old reports

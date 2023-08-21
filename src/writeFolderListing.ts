@@ -14,12 +14,7 @@ export const writeFolderListing = async (ghPagesPath: string, relPath: string) =
         .map((d) => d.name)
     links.push(...listdir)
 
-    const data: Record<string, string | string[]> = {
-        links,
-    }
-    if (!isRoot) {
-        data.date = new Date().toISOString()
-    }
+    const data = { links }
 
     await fs.writeFile(`${fullPath}/data.json`, JSON.stringify(data, null, 2))
     await fs.writeFile(`${fullPath}/index.html`, listingReport)

@@ -2,14 +2,72 @@
 
 Allure Report with history per branch
 
-## Inputs
+See examples:
 
-TODO
+- [Allure History List](https://mgrybyk.github.io/allure-report-branch-action/allure-action/main/self-test/)
+- [Allure Report](https://mgrybyk.github.io/allure-report-branch-action/allure-action/main/self-test/5931206129_1692650191550/)
+- [Browser different branches](https://mgrybyk.github.io/allure-report-branch-action/allure-action/)
+- [Pull Request Comment Example](todo)
 
-## Example usage
+## Usage
 
-TODO
+Enable Pages in your repository settings.
+![Github Pages](docs/github_pages.png "Github Pages")
 
-## GitHub Pages structure
+```yaml
+permissions:
+  contents: write
 
-`allure-report-branch-action/${branchName}/${report_id}/${runId}` ex `allure-report-branch-action/main/allure-report/5815004460/`
+steps:
+  - name: Checkout gh-pages
+    uses: actions/checkout@v3
+    if: always()
+    continue-on-error: true
+    with:
+      ref: gh-pages # branch name
+      path: gh-pages-dir # checkout path
+
+  - name: Allure Report Action
+    uses: TODO - Publish
+    if: always()
+    continue-on-error: true
+    id: self_test # used in comment to PR
+    with:
+      report_id: 'self-test'
+      gh_pages: 'gh-pages-dir'
+      report_dir: 'allure-results'
+
+  - name: Commit and push report to gh-pages
+    uses: stefanzweifel/git-auto-commit-action@v4
+    if: always()
+    with:
+      repository: gh-pages-dir # path to checked out gh-pages branch
+      branch: gh-pages
+      skip_checkout: true
+```
+
+### Adding PR Comment
+
+```yaml
+permissions:
+  # required by https://github.com/thollander/actions-comment-pull-request
+  pull-requests: write
+
+steps:
+  # After publishing to gh-pages
+  - name: Comment PR with Allure Report link
+    if: ${{ always() && github.event_name == 'pull_request' }}
+    continue-on-error: true
+    uses: thollander/actions-comment-pull-request@v2
+    with:
+      message: |
+        ${{ steps.self_test.outputs.test_result_icon }} [Allure Report](${{ steps.self_test.outputs.report_url }}) | [History](${{ steps.self_test.outputs.report_history_url }})
+      comment_tag: allure_self_test
+      mode: recreate
+```
+
+## Screenshots
+
+![Allure Reports History](docs/allure_history.png "Allure Reports History")
+![PR Comment](docs/pr_comment.png "PR Comment")
+![Allure Report Trend](docs/allure_trend.png "Allure Report Trend")

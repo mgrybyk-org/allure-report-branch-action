@@ -10116,7 +10116,7 @@ try {
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`;
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`;
     // log
-    console.table({
+    console.log({
         report_dir: sourceReportDir,
         gh_pages: ghPagesPath,
         report_id: reportId,

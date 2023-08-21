@@ -24,13 +24,13 @@ jobs:
       - run: npm ci --no-fund --no-audit --no-progress
       - run: npm run checks
       - run: npm run build
-      - run: npx playwright install --with-deps
+      - run: npx playwright install --with-deps chromium
 
       - name: Update screenshots in PRs
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'pull_request'
         run: npm run e2e -- -u
       - name: git commit and push
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'pull_request'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Update screenshots
@@ -38,7 +38,7 @@ jobs:
           file_pattern: 'tests/**/*.png'
 
       - name: Do not update screenshots if not PR
-        if: github.event_name == 'pull_request'
+        if: github.event_name != 'pull_request'
         run: npm run e2e
 
       - name: Checkout gh-pages

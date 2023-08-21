@@ -67,6 +67,7 @@ jobs:
         continue-on-error: true
         with:
           repository: gh-pages-dir # path to checked out gh-pages branch
+          branch: gh-pages
           skip_checkout: true
       - name: Comment PR with Allure Report link
         if: github.event_name == 'pull_request'

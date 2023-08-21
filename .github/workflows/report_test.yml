@@ -69,7 +69,7 @@ jobs:
           skip_checkout: true
 
       - name: Comment PR with Allure Report link
-        if: github.event_name == 'pull_request'
+        if: ${{ always() && github.event_name == 'pull_request' }}
         continue-on-error: true
         uses: thollander/actions-comment-pull-request@v2
         with:

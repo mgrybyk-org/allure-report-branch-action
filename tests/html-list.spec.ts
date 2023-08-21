@@ -8,7 +8,7 @@ test('html list', async ({ page }) => {
     await expect(page.locator('#links')).toBeVisible()
     const links = ['..', 'main', 'feature-branch']
     for (const link of links) {
-        await expect(page.locator(`#links a[href="${link}"]`)).toHaveText(link)
+        await expect(page.locator(`#links a[href="${link}"]`)).toHaveText(link + '_bug')
     }
 
     await expect(page).toHaveScreenshot()

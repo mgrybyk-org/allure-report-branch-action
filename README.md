@@ -11,9 +11,10 @@ See examples:
 
 ## Usage
 
-Enable Pages in your repository settings.
+1. Enable Pages in your repository settings.
 ![Github Pages](docs/github_pages.png "Github Pages")
 
+2. In your workflow yaml
 ```yaml
 permissions:
   contents: write

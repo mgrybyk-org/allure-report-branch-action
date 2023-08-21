@@ -90,6 +90,18 @@ export const updateDataJson = async (reportBaseDir: string, reportDir: string, r
     }
     dataJson.unshift(record)
     await fs.writeFile(dataFile, JSON.stringify(dataJson, null, 2))
+
+    return testResult
+}
+
+export const getTestResultIcon = (testResult: AllureRecordTestResult) => {
+    if (testResult === 'PASS') {
+        return '✅'
+    }
+    if (testResult === 'FAIL') {
+        return '❌'
+    }
+    return '❔'
 }
 
 export const writeAllureListing = async (reportBaseDir: string) => fs.writeFile(`${reportBaseDir}/index.html`, allureReport)

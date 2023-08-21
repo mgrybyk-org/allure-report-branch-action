@@ -53,6 +53,7 @@ jobs:
         uses: ./ # Uses an action in the root directory
         if: always()
         continue-on-error: true
+        id: self_test
         with:
           report_id: 'self-test'
           gh_pages: 'gh-pages-dir'
@@ -64,3 +65,10 @@ jobs:
         continue-on-error: true
         with:
           repository: gh-pages-dir # path to checked out gh-pages branch
+          skip_checkout: true
+      - name: Comment PR with execution number
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            ${{ steps.self_test.outputs.test_result_icon }} [Allure Report](${{ steps.self_test.outputs.report_url }})
+          comment_tag: execution

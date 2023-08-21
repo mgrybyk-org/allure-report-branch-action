@@ -10128,7 +10128,6 @@ try {
         report_url: ghPagesReportDir,
     });
     // action
-    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_url', ghPagesReportDir);
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(reportBaseDir);
     // folder listing
     if (await (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .shouldWriteRootHtml */ .z)(ghPagesPath)) {
@@ -10148,9 +10147,13 @@ try {
         reportUrl: ghPagesReportDir,
     });
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .spawnAllure */ .Mo)(sourceReportDir, reportDir);
-    await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .updateDataJson */ .V0)(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runUniqueId);
+    const testResult = await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .updateDataJson */ .V0)(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runUniqueId);
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .writeAllureListing */ .rF)(reportBaseDir);
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .writeLastRunId */ .j9)(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
+    // outputs
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_url', ghPagesReportDir);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result', testResult);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result_icon', (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .getTestResultIcon */ .RG)(testResult));
 }
 catch (error) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
@@ -10168,6 +10171,7 @@ __webpack_async_result__();
 // EXPORTS
 __nccwpck_require__.d(__webpack_exports__, {
   "k4": () => (/* binding */ getLastRunId),
+  "RG": () => (/* binding */ getTestResultIcon),
   "Mo": () => (/* binding */ spawnAllure),
   "V0": () => (/* binding */ updateDataJson),
   "rF": () => (/* binding */ writeAllureListing),
@@ -10251,6 +10255,16 @@ const updateDataJson = async (reportBaseDir, reportDir, runId, runUniqueId) => {
     };
     dataJson.unshift(record);
     await promises_.writeFile(dataFile, JSON.stringify(dataJson, null, 2));
+    return testResult;
+};
+const getTestResultIcon = (testResult) => {
+    if (testResult === 'PASS') {
+        return '✅';
+    }
+    if (testResult === 'FAIL') {
+        return '❌';
+    }
+    return '❔';
 };
 const writeAllureListing = async (reportBaseDir) => promises_.writeFile(`${reportBaseDir}/index.html`, allureReport);
 

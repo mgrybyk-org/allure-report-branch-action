@@ -30,6 +30,9 @@
         color: #ffffff;
         text-align: left;
       }
+      #allureTable thead th:nth-child(1) {
+        min-width: 80px;
+      }
       #allureTable th,
       #allureTable td {
         padding: 12px 15px;
@@ -75,7 +78,7 @@
     }
 
     const formatDate = (ts) => {
-      let dateTime = new Date(r.timestamp).toISOString().replace('T', ' ')
+      let dateTime = new Date(ts).toISOString().replace('T', ' ')
       dateTime = dateTime.substring(0, dateTime.indexOf('.'))
       return dateTime
     }
@@ -91,7 +94,7 @@
 
     // header data
     const allureTableHeader = allureTable.getElementsByTagName('thead')[0]
-    const headers = ['Date', 'Passed', 'Failed', 'Skipped', 'Total', 'Duration', 'Link'].map((t) => document.createTextNode(t))
+    const headers = ['Date', 'Pass', 'Fail', 'Skip', 'Total', 'Duration', 'Link'].map((t) => document.createTextNode(t))
     allureTableHeader.appendChild(createTr(headers, 'th'))
 
     // body data

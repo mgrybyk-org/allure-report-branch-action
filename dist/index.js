@@ -10152,6 +10152,7 @@ try {
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .writeLastRunId */ .j9)(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
     // outputs
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_url', ghPagesReportDir);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_history_url', ghPagesBaseDir);
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result', testResult);
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result_icon', (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .getTestResultIcon */ .RG)(testResult));
 }

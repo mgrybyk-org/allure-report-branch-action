@@ -80,6 +80,7 @@ try {
 
     // outputs
     core.setOutput('report_url', ghPagesReportDir)
+    core.setOutput('report_history_url', ghPagesBaseDir)
     core.setOutput('test_result', testResult)
     core.setOutput('test_result_icon', getTestResultIcon(testResult))
 } catch (error) {

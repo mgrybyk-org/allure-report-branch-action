@@ -31,6 +31,8 @@ try {
     const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`
     const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`
 
+    console.log(github.context)
+
     // log
     console.log({
         report_dir: sourceReportDir,

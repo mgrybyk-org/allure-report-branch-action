@@ -8,9 +8,9 @@
     "start": "http-server ./reports/allure --port 3000",
     "generate_reports": "node prebuild.js",
     "build": "npm run generate_reports && ncc build index.ts --target es2021 --license licenses.txt",
-    "compile": "npm run generate_reports && tsc",
-    "lint": "eslint --ext .ts --ignore-path .gitignore .",
-    "precommit": "run-p compile lint",
+    "check:compile": "npm run generate_reports && tsc",
+    "check:lint": "eslint --ext .ts --ignore-path .gitignore .",
+    "checks": "run-s check:*",
     "postinstall": "npm run generate_reports",
     "e2e": "playwright test"
   },

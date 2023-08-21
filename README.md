@@ -29,7 +29,7 @@ steps:
       path: gh-pages-dir # checkout path
 
   - name: Allure Report Action
-    uses: TODO - Publish
+    uses: mgrybyk/allure-report-branch-action@v1
     if: always()
     continue-on-error: true
     id: self_test # used in comment to PR

@@ -10135,6 +10135,7 @@ try {
         await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, '.');
     }
     await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, baseDir);
+    await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, `${baseDir}/${branchName}`);
     // process report
     const lastRunId = await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .getLastRunId */ .k4)(reportBaseDir);
     if (lastRunId) {

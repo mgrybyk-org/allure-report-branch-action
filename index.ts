@@ -54,6 +54,7 @@ try {
         await writeFolderListing(ghPagesPath, '.')
     }
     await writeFolderListing(ghPagesPath, baseDir)
+    await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
 
     // process report
     const lastRunId = await getLastRunId(reportBaseDir)

@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "http-server ./reports/allure --port 3000",
+    "start": "http-server ./reports --port 3000",
     "generate_reports": "node prebuild.js",
     "build": "npm run generate_reports && ncc build index.ts --target es2021 --license licenses.txt",
     "check:compile": "npm run generate_reports && tsc",

@@ -17,6 +17,9 @@ inputs:
     description: 'Folder with gh-pages branch'
     required: true
     default: 'gh-pages'
+outputs:
+  report_url:
+    description: 'Published Allure Report url'
 runs:
   using: 'docker'
   image: 'Dockerfile'

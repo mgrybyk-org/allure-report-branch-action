@@ -66,9 +66,10 @@ jobs:
         with:
           repository: gh-pages-dir # path to checked out gh-pages branch
           skip_checkout: true
-      - name: Comment PR with execution number
+      - name: Comment PR with Allure Report link
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
             ${{ steps.self_test.outputs.test_result_icon }} [Allure Report](${{ steps.self_test.outputs.report_url }})
-          comment_tag: execution
+          comment_tag: allure_self_test
+          mode: recreate

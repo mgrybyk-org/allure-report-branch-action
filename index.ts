@@ -79,15 +79,18 @@ try {
         reportUrl: ghPagesReportDir,
     })
     await spawnAllure(sourceReportDir, reportDir)
-    const testResult = await updateDataJson(reportBaseDir, reportDir, github.context.runId, runUniqueId)
+    const results = await updateDataJson(reportBaseDir, reportDir, github.context.runId, runUniqueId)
     await writeAllureListing(reportBaseDir)
     await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
 
     // outputs
     core.setOutput('report_url', ghPagesReportDir)
     core.setOutput('report_history_url', ghPagesBaseDir)
-    core.setOutput('test_result', testResult)
-    core.setOutput('test_result_icon', getTestResultIcon(testResult))
+    core.setOutput('test_result', results.testResult)
+    core.setOutput('test_result_icon', getTestResultIcon(results.testResult))
+    core.setOutput('test_result_passed', results.passed)
+    core.setOutput('test_result_failed', results.failed)
+    core.setOutput('test_result_total', results.total)
 } catch (error) {
     core.setFailed(error.message)
 }

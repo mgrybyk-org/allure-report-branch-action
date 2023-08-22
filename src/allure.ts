@@ -112,8 +112,11 @@ export const isAllureResultsOk = async (sourceReportDir: string) => {
             (d) => d.isFile() && d.name.toLowerCase().endsWith('.json')
         )
 
+        if (listfiles.length > 0) {
+            return true
+        }
         console.log('allure-results folder has no json files:', sourceReportDir)
-        return listfiles.length > 0
+        return false
     }
     console.log("allure-results folder doesn't exist:", sourceReportDir)
     return false

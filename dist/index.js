@@ -10086,7 +10086,7 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(7436);
 /* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(4362);
-/* harmony import */ var _src_allure_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(8791);
+/* harmony import */ var _src_allure_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(9302);
 /* harmony import */ var _src_helpers_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(3015);
 
 
@@ -10151,8 +10151,9 @@ try {
     });
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .spawnAllure */ .Mo)(sourceReportDir, reportDir);
     const results = await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .updateDataJson */ .V0)(reportBaseDir, reportDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runUniqueId);
-    await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .writeAllureListing */ .rF)(reportBaseDir);
     await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .writeLastRunId */ .j9)(reportBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.runId, runTimestamp);
+    await (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .gitPull */ .x)(ghPagesPath);
+    await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .writeAllureListing */ .rF)(reportBaseDir);
     // outputs
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_url', ghPagesReportDir);
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('report_history_url', ghPagesBaseDir);
@@ -10160,7 +10161,7 @@ try {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result_icon', (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .getTestResultIcon */ .RG)(results.testResult));
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result_passed', results.passed);
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result_failed', results.failed);
-    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result_total', results.total);
+    _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('test_result_to tal', results.total);
 }
 catch (error) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
@@ -10171,7 +10172,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8791:
+/***/ 9302:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 
@@ -10187,8 +10188,8 @@ __nccwpck_require__.d(__webpack_exports__, {
   "j9": () => (/* binding */ writeLastRunId)
 });
 
-;// CONCATENATED MODULE: external "child_process"
-const external_child_process_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("child_process");
+// EXTERNAL MODULE: external "child_process"
+var external_child_process_ = __nccwpck_require__(2081);
 // EXTERNAL MODULE: external "fs/promises"
 var promises_ = __nccwpck_require__(3292);
 ;// CONCATENATED MODULE: ./src/report_allure.ts
@@ -10218,7 +10219,7 @@ const writeExecutorJson = async (sourceReportDir, { buildUrl, buildOrder, report
     await promises_.writeFile(dataFile, JSON.stringify(dataJson, null, 2));
 };
 const spawnAllure = async (allureResultsDir, allureReportDir) => {
-    const allureChildProcess = external_child_process_namespaceObject.spawn('/allure-commandline/bin/allure', ['generate', '--clean', allureResultsDir, '-o', allureReportDir], { stdio: 'inherit' });
+    const allureChildProcess = external_child_process_.spawn('/allure-commandline/bin/allure', ['generate', '--clean', allureResultsDir, '-o', allureReportDir], { stdio: 'inherit' });
     const generation = new Promise((resolve, reject) => {
         allureChildProcess.once('error', reject);
         allureChildProcess.once('exit', (code) => (code === 0 ? resolve() : reject(code)));
@@ -10301,11 +10302,26 @@ const isAllureResultsOk = async (sourceReportDir) => {
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "L": () => (/* binding */ getBranchName)
+/* harmony export */   "L": () => (/* binding */ getBranchName),
+/* harmony export */   "x": () => (/* binding */ gitPull)
 /* harmony export */ });
+/* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(2081);
+/* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(child_process__WEBPACK_IMPORTED_MODULE_0__);
+
 const getBranchName = (gitRef, pull_request) => {
     const branchName = pull_request ? pull_request.head.ref : gitRef.replace('refs/heads/', '');
     return branchName.replaceAll('/', '_').replaceAll('.', '_');
+};
+/**
+ * run `git pull` before writing potentially conflicting files
+ * like `data.json`
+ */
+const gitPull = async (gitPull) => {
+    const gitChildProcess = child_process__WEBPACK_IMPORTED_MODULE_0__.spawn('git', ['pull'], { stdio: 'inherit', cwd: gitPull });
+    await new Promise((resolve, reject) => {
+        gitChildProcess.once('error', reject);
+        gitChildProcess.once('exit', (code) => (code === 0 ? resolve() : reject(code)));
+    });
 };
 
 
@@ -10403,6 +10419,13 @@ module.exports = eval("require")("encoding");
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("assert");
+
+/***/ }),
+
+/***/ 2081:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("child_process");
 
 /***/ }),
 

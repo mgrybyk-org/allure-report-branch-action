@@ -12,7 +12,7 @@ import {
     getTestResultIcon,
     isAllureResultsOk,
 } from './src/allure.js'
-import { getBranchName } from './src/helpers.js'
+import { getBranchName, gitPull } from './src/helpers.js'
 
 const baseDir = 'allure-action'
 
@@ -80,8 +80,9 @@ try {
     })
     await spawnAllure(sourceReportDir, reportDir)
     const results = await updateDataJson(reportBaseDir, reportDir, github.context.runId, runUniqueId)
-    await writeAllureListing(reportBaseDir)
     await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
+    await gitPull(ghPagesPath)
+    await writeAllureListing(reportBaseDir)
 
     // outputs
     core.setOutput('report_url', ghPagesReportDir)
@@ -90,7 +91,7 @@ try {
     core.setOutput('test_result_icon', getTestResultIcon(results.testResult))
     core.setOutput('test_result_passed', results.passed)
     core.setOutput('test_result_failed', results.failed)
-    core.setOutput('test_result_total', results.total)
+    core.setOutput('test_result_to tal', results.total)
 } catch (error) {
     core.setFailed(error.message)
 }

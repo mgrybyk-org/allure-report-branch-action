@@ -32,8 +32,10 @@ jobs:
       - run: npm ci --no-fund --no-audit --no-progress
       - run: npm run checks
       - run: npm run build
+      - name: Make sure dist was commited before push
+        run: |
+          [ $(git status -s -uno | wc -l | bc ) != "0" ] && exit 1
       - run: npx playwright install --with-deps chromium
-
       - name: Update screenshots in PRs
         if: github.event_name == 'pull_request'
         run: npm run e2e -- --update-snapshots

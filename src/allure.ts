@@ -105,3 +105,15 @@ export const getTestResultIcon = (testResult: AllureRecordTestResult) => {
 }
 
 export const writeAllureListing = async (reportBaseDir: string) => fs.writeFile(`${reportBaseDir}/index.html`, allureReport)
+
+export const isAllureResultsOk = async (sourceReportDir: string) => {
+    if (await isFileExist(sourceReportDir)) {
+        const listfiles = (await fs.readdir(sourceReportDir, { withFileTypes: true }))
+            .filter((d) => d.isFile() && !d.name.toLowerCase().endsWith('.json'))
+            .map((d) => d.name)
+        console.log('allure-results folder has no json files:', sourceReportDir)
+        return listfiles.length > 0
+    }
+    console.log("allure-results folder doesn't exist:", sourceReportDir)
+    return false
+}

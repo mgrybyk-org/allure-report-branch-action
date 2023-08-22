@@ -8,9 +8,8 @@ RUN echo "===============" && \
     echo NodeJS: $(node --version) && \
     echo JAVA && \
     java -version && \
-    echo "==============="
-
-RUN wget --no-verbose -O /tmp/allure-$RELEASE.tgz $ALLURE_REPO/$RELEASE/allure-commandline-$RELEASE.tgz && \
+    echo "===============" && \
+    wget --no-verbose -O /tmp/allure-$RELEASE.tgz $ALLURE_REPO/$RELEASE/allure-commandline-$RELEASE.tgz && \
     tar -xf /tmp/allure-$RELEASE.tgz && \
     rm -rf /tmp/* && \
     chmod -R +x /allure-$RELEASE/bin && \

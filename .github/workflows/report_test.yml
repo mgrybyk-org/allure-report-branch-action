@@ -68,8 +68,8 @@ jobs:
           report_id: 'self-test'
           gh_pages: 'gh-pages-dir'
           report_dir: 'allure-results'
+          list_dirs: ${{ github.ref == 'refs/heads/main' }}
 
-      - run: cd gh-pages-dir && git pull --rebase --force
       - name: Commit and push report to gh-pages
         uses: stefanzweifel/git-auto-commit-action@v4
         if: always()

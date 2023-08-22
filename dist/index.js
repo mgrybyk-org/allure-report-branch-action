@@ -10101,6 +10101,7 @@ try {
     const sourceReportDir = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_dir');
     const ghPagesPath = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('gh_pages');
     const reportId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_id');
+    const listDirs = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('list_dirs') == 'true';
     const branchName = (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .getBranchName */ .L)(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request);
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`;
     /**
@@ -10121,6 +10122,7 @@ try {
         gh_pages: ghPagesPath,
         report_id: reportId,
         runUniqueId,
+        ref: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref,
         repo: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo,
         branchName,
         reportBaseDir,
@@ -10133,12 +10135,14 @@ try {
     // action
     await _actions_io__WEBPACK_IMPORTED_MODULE_2__.mkdirP(reportBaseDir);
     // folder listing
-    if (await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .shouldWriteRootHtml */ .z)(ghPagesPath)) {
-        await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, '.');
+    if (listDirs) {
+        if (await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .shouldWriteRootHtml */ .z)(ghPagesPath)) {
+            await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, '.');
+        }
+        await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, baseDir);
+        await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, `${baseDir}/${branchName}`);
     }
-    await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, baseDir);
-    await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__/* .writeFolderListing */ .l)(ghPagesPath, `${baseDir}/${branchName}`);
-    // process report
+    // process allure report
     const lastRunId = await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .getLastRunId */ .k4)(reportBaseDir);
     if (lastRunId) {
         await _actions_io__WEBPACK_IMPORTED_MODULE_2__.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true });

@@ -20,6 +20,18 @@ inputs:
 outputs:
   report_url:
     description: 'Published Allure Report url'
+  report_history_url:
+    description: 'Published Allure History list url'
+  test_result:
+    description: 'test result: PASS | FAIL | UNKNOWN'
+  test_result_icon:
+    description: 'test result icon: ✅ | ❌ | ❔'
+  test_result_passed:
+    description: 'Number of passed tests'
+  test_result_failed:
+    description: 'Number of failed tests'
+  test_result_total:
+    description: 'Number of tests in total'
 runs:
   using: 'docker'
   image: 'Dockerfile'

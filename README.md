@@ -57,7 +57,7 @@ permissions:
 steps:
   # After publishing to gh-pages
   - name: Comment PR with Allure Report link
-    if: ${{ always() && github.event_name == 'pull_request' }}
+    if: ${{ always() && github.event_name == 'pull_request' && steps.self_test.outputs.report_url }}
     continue-on-error: true
     uses: thollander/actions-comment-pull-request@v2
     with:
@@ -76,6 +76,10 @@ steps:
 ![Allure Reports History](docs/allure_history.png "Allure Reports History")
 ![PR Comment](docs/pr_comment.png "PR Comment")
 ![Allure Report Trend](docs/allure_trend.png "Allure Report Trend")
+
+## API
+
+Please see [action.yml](./action.yml)
 
 ## Troubleshooting
 

@@ -101,6 +101,7 @@ export const getTestResultIcon = (testResult: AllureRecordTestResult) => {
     if (testResult === 'FAIL') {
         return '❌'
     }
+    console.log('REMOVE ME')
     return '❔'
 }
 

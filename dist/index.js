@@ -10274,9 +10274,7 @@ const getTestResultIcon = (testResult) => {
 const writeAllureListing = async (reportBaseDir) => promises_.writeFile(`${reportBaseDir}/index.html`, allureReport);
 const isAllureResultsOk = async (sourceReportDir) => {
     if (await (0,isFileExists/* isFileExist */.e)(sourceReportDir)) {
-        const listfiles = (await promises_.readdir(sourceReportDir, { withFileTypes: true }))
-            .filter((d) => d.isFile() && !d.name.toLowerCase().endsWith('.json'))
-            .map((d) => d.name);
+        const listfiles = (await promises_.readdir(sourceReportDir, { withFileTypes: true })).filter((d) => d.isFile() && d.name.toLowerCase().endsWith('.json'));
         console.log('allure-results folder has no json files:', sourceReportDir);
         return listfiles.length > 0;
     }

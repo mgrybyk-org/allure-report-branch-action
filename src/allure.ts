@@ -108,9 +108,10 @@ export const writeAllureListing = async (reportBaseDir: string) => fs.writeFile(
 
 export const isAllureResultsOk = async (sourceReportDir: string) => {
     if (await isFileExist(sourceReportDir)) {
-        const listfiles = (await fs.readdir(sourceReportDir, { withFileTypes: true }))
-            .filter((d) => d.isFile() && !d.name.toLowerCase().endsWith('.json'))
-            .map((d) => d.name)
+        const listfiles = (await fs.readdir(sourceReportDir, { withFileTypes: true })).filter(
+            (d) => d.isFile() && d.name.toLowerCase().endsWith('.json')
+        )
+
         console.log('allure-results folder has no json files:', sourceReportDir)
         return listfiles.length > 0
     }

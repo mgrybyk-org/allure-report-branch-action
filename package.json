@@ -1,6 +1,6 @@
 {
   "name": "allure-report-branch-action",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Allure Report with history per branch",
   "main": "index.js",
   "type": "module",

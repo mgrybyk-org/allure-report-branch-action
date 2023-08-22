@@ -10,6 +10,7 @@ import {
     updateDataJson,
     writeAllureListing,
     getTestResultIcon,
+    isAllureResultsOk,
 } from './src/allure.js'
 import { getBranchName, shouldWriteRootHtml } from './src/helpers.js'
 
@@ -51,6 +52,10 @@ try {
         reportDir,
         report_url: ghPagesReportDir,
     })
+
+    if (!(await isAllureResultsOk(sourceReportDir))) {
+        throw new Error('There were issues with the allure-results, see error above.')
+    }
 
     // action
     await io.mkdirP(reportBaseDir)

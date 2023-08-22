@@ -32,12 +32,15 @@ jobs:
       - run: npm ci --no-fund --no-audit --no-progress
       - run: npm run checks
       - run: npm run build
-      # [ $(git status -s -uno | wc -l | bc ) != "0" ] && exit 1
       - name: Make sure dist was commited before push
         run: |
           git status -s -uno
           git status -s -uno | wc -l || echo 123
           git status -s -uno | wc -l | bc || echo 456
+          qwe=$(git status -s -uno | wc -l | bc)
+          echo "_$qwe_ and _0_"
+          [ $(git status -s -uno | wc -l | bc ) != "0" ] && echo exit_1 || echo OK
+          [[ $(git status -s -uno | wc -l | bc ) != "0" ]] && echo exit_11 || echo OK2
       - run: npx playwright install --with-deps chromium
       - name: Update screenshots in PRs
         if: github.event_name == 'pull_request'

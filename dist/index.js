@@ -10275,8 +10275,11 @@ const writeAllureListing = async (reportBaseDir) => promises_.writeFile(`${repor
 const isAllureResultsOk = async (sourceReportDir) => {
     if (await (0,isFileExists/* isFileExist */.e)(sourceReportDir)) {
         const listfiles = (await promises_.readdir(sourceReportDir, { withFileTypes: true })).filter((d) => d.isFile() && d.name.toLowerCase().endsWith('.json'));
+        if (listfiles.length > 0) {
+            return true;
+        }
         console.log('allure-results folder has no json files:', sourceReportDir);
-        return listfiles.length > 0;
+        return false;
     }
     console.log("allure-results folder doesn't exist:", sourceReportDir);
     return false;

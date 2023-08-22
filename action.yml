@@ -17,6 +17,10 @@ inputs:
     description: 'Folder with gh-pages branch'
     required: true
     default: 'gh-pages'
+  list_dirs:
+    description: 'Write index.html to the Github Action folders. Might cause concurrency issues!'
+    required: false
+    default: false
 outputs:
   report_url:
     description: 'Published Allure Report url'

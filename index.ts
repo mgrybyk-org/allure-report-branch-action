@@ -23,6 +23,7 @@ try {
     const sourceReportDir = core.getInput('report_dir')
     const ghPagesPath = core.getInput('gh_pages')
     const reportId = core.getInput('report_id')
+    const listDirs = core.getInput('list_dirs') == 'true'
     const branchName = getBranchName(github.context.ref, github.context.payload.pull_request)
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`
 
@@ -46,6 +47,7 @@ try {
         gh_pages: ghPagesPath,
         report_id: reportId,
         runUniqueId,
+        ref: github.context.ref,
         repo: github.context.repo,
         branchName,
         reportBaseDir,
@@ -61,13 +63,15 @@ try {
     await io.mkdirP(reportBaseDir)
 
     // folder listing
-    if (await shouldWriteRootHtml(ghPagesPath)) {
-        await writeFolderListing(ghPagesPath, '.')
+    if (listDirs) {
+        if (await shouldWriteRootHtml(ghPagesPath)) {
+            await writeFolderListing(ghPagesPath, '.')
+        }
+        await writeFolderListing(ghPagesPath, baseDir)
+        await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
     }
-    await writeFolderListing(ghPagesPath, baseDir)
-    await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
 
-    // process report
+    // process allure report
     const lastRunId = await getLastRunId(reportBaseDir)
     if (lastRunId) {
         await io.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true })

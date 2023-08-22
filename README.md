@@ -89,12 +89,12 @@ Please see [action.yml](./action.yml)
 
 Log `! [rejected]        HEAD -> gh-pages (non-fast-forward)`
 
-Do not run your workflow concurrently
+Do not run your workflow concurrently per PR or branch!
 ```yaml
 # Allow only one job per PR or branch
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true # cancel jobs in progress
+  cancel-in-progress: true # true to cancel jobs in progress, set to false otherwise
 ```  
 
 ## Upcoming features

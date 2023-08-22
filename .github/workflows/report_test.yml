@@ -35,13 +35,7 @@ jobs:
       - name: Make sure dist was commited before push
         run: |
           git status -s -uno
-          git status -s -uno | wc -l || echo 123
-          git status -s -uno | wc -l | bc || echo 456
-          qwe=$(git status -s -uno | wc -l | bc) && echo "_${qwe}_ and _0_"
-          [ $(git status -s -uno | wc -l | bc ) != "0" ] && echo exit_11 || echo OK11
-          [[ $(git status -s -uno | wc -l | bc ) != "0" ]] && echo exit_22 || echo OK22
-          [ $(git status -s -uno | wc -l | bc ) == "0" ] && echo exit_11 || echo OK11
-          [[ $(git status -s -uno | wc -l | bc ) == "0" ]] && echo exit_22 || echo OK22
+          [ $(git status -s -uno | wc -l | bc ) != "0" ] && exit 1
       - run: npx playwright install --with-deps chromium
       - name: Update screenshots in PRs
         if: github.event_name == 'pull_request'

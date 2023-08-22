@@ -9,6 +9,8 @@ See examples:
 - [Browser different branches](https://mgrybyk.github.io/allure-report-branch-action/allure-action/)
 - [Pull Request Comment Example](https://github.com/mgrybyk/allure-report-branch-action/pull/4)
 
+*Compatible with HTML Trend Report Action*
+
 ## Usage
 
 1. Enable Pages in your repository settings.
@@ -89,9 +91,10 @@ Log `! [rejected]        HEAD -> gh-pages (non-fast-forward)`
 
 Do not run your workflow concurrently
 ```yaml
+# Allow only one job per PR or branch
 concurrency:
-  group: 'pages'
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true # cancel jobs in progress
 ```  
 
 ## Upcoming features

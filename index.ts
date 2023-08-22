@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as io from '@actions/io'
-import { writeFolderListing } from './src/writeFolderListing.js'
+import { writeFolderListing, shouldWriteRootHtml } from './src/writeFolderListing.js'
 import {
     getLastRunId,
     writeExecutorJson,
@@ -12,7 +12,7 @@ import {
     getTestResultIcon,
     isAllureResultsOk,
 } from './src/allure.js'
-import { getBranchName, shouldWriteRootHtml } from './src/helpers.js'
+import { getBranchName } from './src/helpers.js'
 
 const baseDir = 'allure-action'
 

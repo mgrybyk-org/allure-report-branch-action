@@ -84,6 +84,6 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            ${{ steps.self_test.outputs.test_result_icon }} [Allure Report](${{ steps.self_test.outputs.report_url }}) | [History](${{ steps.self_test.outputs.report_history_url }})
+            ${{ steps.self_test.outputs.test_result_icon }} [Allure Report](${{ steps.self_test.outputs.report_url }}) | ${{ steps.self_test.outputs.test_result_passed }}/${{ steps.self_test.outputs.test_result_failed }}/${{ steps.self_test.outputs.test_result_total }} | [History](${{ steps.self_test.outputs.report_history_url }})
           comment_tag: allure_self_test
           mode: recreate

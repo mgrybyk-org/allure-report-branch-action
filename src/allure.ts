@@ -76,8 +76,8 @@ export const updateDataJson = async (reportBaseDir: string, reportDir: string, r
         dataJson = []
     }
 
-    const testResult: AllureRecordTestResult =
-        summaryJson.statistic.broken + summaryJson.statistic.failed > 0 ? 'FAIL' : summaryJson.statistic.passed > 0 ? 'PASS' : 'UNKNOWN'
+    const failedTests = summaryJson.statistic.broken + summaryJson.statistic.failed
+    const testResult: AllureRecordTestResult = failedTests > 0 ? 'FAIL' : summaryJson.statistic.passed > 0 ? 'PASS' : 'UNKNOWN'
     const record: AllureRecord = {
         runId,
         runUniqueId,
@@ -91,7 +91,12 @@ export const updateDataJson = async (reportBaseDir: string, reportDir: string, r
     dataJson.unshift(record)
     await fs.writeFile(dataFile, JSON.stringify(dataJson, null, 2))
 
-    return testResult
+    return {
+        testResult,
+        passed: summaryJson.statistic.passed,
+        failed: failedTests,
+        total: summaryJson.statistic.total,
+    }
 }
 
 export const getTestResultIcon = (testResult: AllureRecordTestResult) => {
@@ -101,7 +106,6 @@ export const getTestResultIcon = (testResult: AllureRecordTestResult) => {
     if (testResult === 'FAIL') {
         return '❌'
     }
-    console.log('REMOVE ME')
     return '❔'
 }
 

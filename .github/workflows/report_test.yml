@@ -37,10 +37,11 @@ jobs:
           git status -s -uno
           git status -s -uno | wc -l || echo 123
           git status -s -uno | wc -l | bc || echo 456
-          qwe=$(git status -s -uno | wc -l | bc)
-          echo "_$qwe_ and _0_"
-          [ $(git status -s -uno | wc -l | bc ) != "0" ] && echo exit_1 || echo OK
-          [[ $(git status -s -uno | wc -l | bc ) != "0" ]] && echo exit_11 || echo OK2
+          qwe=$(git status -s -uno | wc -l | bc) && echo "_${qwe}_ and _0_"
+          [ $(git status -s -uno | wc -l | bc ) != "0" ] && echo exit_11 || echo OK11
+          [[ $(git status -s -uno | wc -l | bc ) != "0" ]] && echo exit_22 || echo OK22
+          [ $(git status -s -uno | wc -l | bc ) == "0" ] && echo exit_11 || echo OK11
+          [[ $(git status -s -uno | wc -l | bc ) == "0" ]] && echo exit_22 || echo OK22
       - run: npx playwright install --with-deps chromium
       - name: Update screenshots in PRs
         if: github.event_name == 'pull_request'

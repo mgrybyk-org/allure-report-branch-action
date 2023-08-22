@@ -1,4 +1,4 @@
-FROM timbru31/java-node:17-alpine-jre-18
+FROM timbru31/java-node:17-jre-18
 
 ARG RELEASE=2.23.1
 ARG ALLURE_REPO=https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline

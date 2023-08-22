@@ -76,7 +76,6 @@ jobs:
         with:
           repository: gh-pages-dir # path to checked out gh-pages branch
           branch: gh-pages
-          skip_checkout: true
 
       - name: Comment PR with Allure Report link
         if: ${{ always() && github.event_name == 'pull_request' && steps.self_test.outputs.report_url }}

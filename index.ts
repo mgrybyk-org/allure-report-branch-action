@@ -60,13 +60,6 @@ try {
     // action
     await io.mkdirP(reportBaseDir)
 
-    // folder listing
-    if (await shouldWriteRootHtml(ghPagesPath)) {
-        await writeFolderListing(ghPagesPath, '.')
-    }
-    await writeFolderListing(ghPagesPath, baseDir)
-    await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
-
     // process report
     const lastRunId = await getLastRunId(reportBaseDir)
     if (lastRunId) {
@@ -81,8 +74,19 @@ try {
     await spawnAllure(sourceReportDir, reportDir)
     const results = await updateDataJson(reportBaseDir, reportDir, github.context.runId, runUniqueId)
     await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
+
+    // folder listing
     await gitPull(ghPagesPath)
-    await writeAllureListing(reportBaseDir)
+
+    const tasks = [
+        writeFolderListing(ghPagesPath, baseDir),
+        writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`),
+        writeAllureListing(reportBaseDir),
+    ]
+    if (await shouldWriteRootHtml(ghPagesPath)) {
+        tasks.push(writeFolderListing(ghPagesPath, '.'))
+    }
+    await Promise.all(tasks)
 
     // outputs
     core.setOutput('report_url', ghPagesReportDir)

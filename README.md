@@ -40,13 +40,12 @@ steps:
       gh_pages: 'gh-pages-dir'
       report_dir: 'allure-results'
 
-  - name: Commit and push report to gh-pages
-    uses: stefanzweifel/git-auto-commit-action@v4
-    if: always()
+  - name: Git Commit and Push Action
+    uses: mgrybyk/git-commit-pull-push-action@v1
     with:
-      repository: gh-pages-dir # path to checked out gh-pages branch
+      repository: gh-pages-dir
       branch: gh-pages
-      skip_checkout: true
+      pull_args: --rebase -X ours
 ```
 
 ### Adding PR Comment

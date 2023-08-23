@@ -70,19 +70,11 @@ jobs:
           report_dir: 'allure-results'
           list_dirs: ${{ github.ref == 'refs/heads/main' }}
 
-      - uses: EndBug/add-and-commit@v9
-        if: always()
+      - name: Git Commit and Push Action
+        uses: mgrybyk/git-commit-pull-push-action@v1
         with:
-          cwd: gh-pages-dir
-          message: 'Publish reports'
-          pull: '--rebase'
-
-      # - name: Commit and push report to gh-pages
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   if: always()
-      #   with:
-      #     repository: gh-pages-dir # path to checked out gh-pages branch
-      #     branch: gh-pages
+          repository: gh-pages-dir
+          branch: gh-pages
 
       - name: Comment PR with Allure Report link
         if: ${{ always() && github.event_name == 'pull_request' && steps.self_test.outputs.report_url }}

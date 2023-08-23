@@ -42,6 +42,7 @@ steps:
 
   - name: Git Commit and Push Action
     uses: mgrybyk/git-commit-pull-push-action@v1
+    if: always()
     with:
       repository: gh-pages-dir
       branch: gh-pages

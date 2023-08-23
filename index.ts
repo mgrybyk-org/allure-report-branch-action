@@ -53,6 +53,7 @@ try {
         reportBaseDir,
         reportDir,
         report_url: ghPagesReportDir,
+        listDirs: core.getInput('list_dirs'),
     })
 
     if (!(await isAllureResultsOk(sourceReportDir))) {

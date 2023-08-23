@@ -10128,6 +10128,7 @@ try {
         reportBaseDir,
         reportDir,
         report_url: ghPagesReportDir,
+        listDirs: _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('list_dirs'),
     });
     if (!(await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .isAllureResultsOk */ .aL)(sourceReportDir))) {
         throw new Error('There were issues with the allure-results, see error above.');

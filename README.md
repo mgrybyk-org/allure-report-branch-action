@@ -9,6 +9,8 @@ See examples:
 - [Browser different branches](https://mgrybyk.github.io/allure-report-branch-action/allure-action/)
 - [Pull Request Comment Example](https://github.com/mgrybyk/allure-report-branch-action/pull/4)
 
+*Compatible with HTML Trend Report Action*
+
 ## Usage
 
 1. Enable Pages in your repository settings.
@@ -38,13 +40,13 @@ steps:
       gh_pages: 'gh-pages-dir'
       report_dir: 'allure-results'
 
-  - name: Commit and push report to gh-pages
-    uses: stefanzweifel/git-auto-commit-action@v4
+  - name: Git Commit and Push Action
+    uses: mgrybyk/git-commit-pull-push-action@v1
     if: always()
     with:
-      repository: gh-pages-dir # path to checked out gh-pages branch
+      repository: gh-pages-dir
       branch: gh-pages
-      skip_checkout: true
+      pull_args: --rebase -X ours
 ```
 
 ### Adding PR Comment
@@ -87,11 +89,12 @@ Please see [action.yml](./action.yml)
 
 Log `! [rejected]        HEAD -> gh-pages (non-fast-forward)`
 
-Do not run your workflow concurrently
+Do not run your workflow concurrently per PR or branch!
 ```yaml
+# Allow only one job per PR or branch
 concurrency:
-  group: 'pages'
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true # true to cancel jobs in progress, set to false otherwise
 ```  
 
 ## Upcoming features

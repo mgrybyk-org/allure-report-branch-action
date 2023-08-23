@@ -12,11 +12,10 @@ permissions:
   # required by https://github.com/thollander/actions-comment-pull-request
   pull-requests: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Allow only one job per PR or branch
 concurrency:
-  group: 'pages'
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true # cancel jobs in progress
 
 jobs:
   test:
@@ -69,14 +68,14 @@ jobs:
           report_id: 'self-test'
           gh_pages: 'gh-pages-dir'
           report_dir: 'allure-results'
+          list_dirs: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Commit and push report to gh-pages
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Git Commit and Push Action
+        uses: mgrybyk/git-commit-pull-push-action@v1
         if: always()
         with:
-          repository: gh-pages-dir # path to checked out gh-pages branch
+          repository: gh-pages-dir
           branch: gh-pages
-          skip_checkout: true
 
       - name: Comment PR with Allure Report link
         if: ${{ always() && github.event_name == 'pull_request' && steps.self_test.outputs.report_url }}

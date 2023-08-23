@@ -10087,7 +10087,9 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(4362);
 /* harmony import */ var _src_allure_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(8791);
-/* harmony import */ var _src_helpers_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(3015);
+/* harmony import */ var _src_helpers_js__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(3015);
+/* harmony import */ var _src_isFileExists_js__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(2139);
+
 
 
 
@@ -10102,7 +10104,7 @@ try {
     const ghPagesPath = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('gh_pages');
     const reportId = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('report_id');
     const listDirs = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('list_dirs') == 'true';
-    const branchName = (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_5__/* .getBranchName */ .L)(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request);
+    const branchName = (0,_src_helpers_js__WEBPACK_IMPORTED_MODULE_6__/* .getBranchName */ .L)(_actions_github__WEBPACK_IMPORTED_MODULE_1__.context.ref, _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request);
     const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`;
     /**
      * `runId` is unique but won't change on job re-run
@@ -10128,8 +10130,11 @@ try {
         reportBaseDir,
         reportDir,
         report_url: ghPagesReportDir,
-        listDirs: _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('list_dirs'),
+        listDirs,
     });
+    if (!(await (0,_src_isFileExists_js__WEBPACK_IMPORTED_MODULE_5__/* .isFileExist */ .e)(ghPagesPath))) {
+        throw new Error("Folder with gh-pages branch doesn't exist: " + ghPagesPath);
+    }
     if (!(await (0,_src_allure_js__WEBPACK_IMPORTED_MODULE_4__/* .isAllureResultsOk */ .aL)(sourceReportDir))) {
         throw new Error('There were issues with the allure-results, see error above.');
     }

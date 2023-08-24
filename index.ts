@@ -13,6 +13,7 @@ import {
     isAllureResultsOk,
 } from './src/allure.js'
 import { getBranchName } from './src/helpers.js'
+import { isFileExist } from './src/isFileExists.js'
 
 const baseDir = 'allure-action'
 
@@ -53,7 +54,12 @@ try {
         reportBaseDir,
         reportDir,
         report_url: ghPagesReportDir,
+        listDirs,
     })
+
+    if (!(await isFileExist(ghPagesPath))) {
+        throw new Error("Folder with gh-pages branch doesn't exist: " + ghPagesPath)
+    }
 
     if (!(await isAllureResultsOk(sourceReportDir))) {
         throw new Error('There were issues with the allure-results, see error above.')

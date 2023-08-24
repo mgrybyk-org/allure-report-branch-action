@@ -1,6 +1,6 @@
 # allure-report-branch-action
 
-Allure Report with history per branch
+Allure Report with history per branch (type: `docker`)
 
 See examples:
 
@@ -95,7 +95,21 @@ Do not run your workflow concurrently per PR or branch!
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true # true to cancel jobs in progress, set to false otherwise
-```  
+```
+
+### Running in Windows or MacOS
+
+The `allure-report-branch-action` is designed as a JavaScript action wrapped with `docker` action because `allure` requires java and is shipped with bunch of java files.
+
+As far as `docker` action runs in linux environments only, it's required to do some extra steps for users running Windows and MacOS workflows. See [Types of actions](https://docs.github.com/en/actions/creating-actions/about-custom-actions#types-of-actions) for more details.
+
+- option 1: using upload/download artifacts. See [simple-elf/allure-report-action/issues/28#issuecomment-1139332329](https://github.com/simple-elf/allure-report-action/issues/28#issuecomment-1139332329)
+- option 2: use JS version of this action (raise an issue and I'll publish it). In this case you'll have to install Java and download download allure-commandline yourself.
+
+## Credits
+
+- [docker-java-node](https://github.com/timbru31/docker-java-node) for building Dockerimage with Java and NodeJS together
+- [thollander/actions-comment-pull-request](https://github.com/thollander/actions-comment-pull-request) for building Github Action that comments the linked PRs
 
 ## Upcoming features
 

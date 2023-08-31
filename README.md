@@ -9,7 +9,7 @@ See examples:
 - [Browse different branches](https://mgrybyk.github.io/allure-report-branch-action/allure-action/)
 - [Pull Request Comment Example](https://github.com/mgrybyk/allure-report-branch-action/pull/4)
 
-*Compatible with HTML Trend Report Action*
+*Compatible with [HTML Trend Report Action](https://github.com/marketplace/actions/publish-report-per-branch).*
 
 ## Usage
 

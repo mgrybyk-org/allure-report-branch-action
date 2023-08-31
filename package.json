@@ -12,7 +12,8 @@
     "check:lint": "eslint --ext .ts --ignore-path .gitignore .",
     "checks": "run-s check:*",
     "postinstall": "npm run generate_reports",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "prepare": "husky install"
   },
   "keywords": [
     "github",

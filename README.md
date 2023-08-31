@@ -34,7 +34,7 @@ steps:
     uses: mgrybyk/allure-report-branch-action@v1
     if: always()
     continue-on-error: true
-    id: self_test # used in comment to PR
+    id: allure # used in comment to PR
     with:
       report_id: 'self-test'
       gh_pages: 'gh-pages-dir'
@@ -51,6 +51,8 @@ steps:
 
 ### Adding PR Comment
 
+Make sure to set `id` in `mgrybyk/allure-report-branch-action` step.
+
 ```yaml
 permissions:
   # required by https://github.com/thollander/actions-comment-pull-request
@@ -59,13 +61,13 @@ permissions:
 steps:
   # After publishing to gh-pages
   - name: Comment PR with Allure Report link
-    if: ${{ always() && github.event_name == 'pull_request' && steps.self_test.outputs.report_url }}
+    if: ${{ always() && github.event_name == 'pull_request' && steps.allure.outputs.report_url }}
     continue-on-error: true
     uses: thollander/actions-comment-pull-request@v2
     with:
       message: |
-        ${{ steps.self_test.outputs.test_result_icon }} [Allure Report](${{ steps.self_test.outputs.report_url }}) | [History](${{ steps.self_test.outputs.report_history_url }})
-      comment_tag: allure_self_test
+        ${{ steps.allure.outputs.test_result_icon }} [Allure Report](${{ steps.allure.outputs.report_url }}) | [History](${{ steps.allure.outputs.report_history_url }})
+      comment_tag: allure_report
       mode: recreate
 ```
 

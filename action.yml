@@ -24,6 +24,8 @@ inputs:
 outputs:
   report_url:
     description: 'Published Allure Report url'
+  reportDir:
+    description: 'Report directory'
   report_history_url:
     description: 'Published Allure History list url'
   test_result:

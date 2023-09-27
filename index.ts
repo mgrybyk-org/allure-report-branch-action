@@ -95,6 +95,7 @@ try {
 
     // outputs
     core.setOutput('report_url', ghPagesReportDir)
+    core.setOutput('reportDir', reportDir)
     core.setOutput('report_history_url', ghPagesBaseDir)
     core.setOutput('test_result', results.testResult)
     core.setOutput('test_result_icon', getTestResultIcon(results.testResult))

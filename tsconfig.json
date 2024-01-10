@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "moduleResolution": "Node16",
-    "module": "Node16",
-    "target": "ES2021",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "target": "ES2022",
     "skipLibCheck": true,
     "noEmit": true,
     /* Linting */

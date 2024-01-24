@@ -118,7 +118,7 @@
           rowData.push(document.createTextNode(r.summary.statistic.failed + r.summary.statistic.broken))
           rowData.push(document.createTextNode(r.summary.statistic.skipped))
           rowData.push(document.createTextNode(r.summary.statistic.total))
-          rowData.push(document.createTextNode(formatDuration(r.summary.time.sumDuration)))
+          rowData.push(document.createTextNode(formatDuration(r.summary.time.duration)))
 
           const link = document.createElement('a')
           link.href = `./${r.runUniqueId}`

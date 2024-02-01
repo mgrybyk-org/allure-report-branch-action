@@ -1,9 +1,8 @@
 {
   "links": [
     "..",
+    "cleanup",
     "example-pr",
-    "git-pull",
-    "main",
-    "mgrybyk-patch-1"
+    "main"
   ]
 }

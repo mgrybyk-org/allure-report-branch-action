@@ -5,7 +5,7 @@ Allure Report with history per branch (type: `docker`)
 See examples:
 
 - [Allure History List](https://mgrybyk.github.io/allure-report-branch-action/allure-action/main/self-test/)
-- [Allure Report](https://mgrybyk.github.io/allure-report-branch-action/allure-action/main/self-test/5931206129_1692650191550/)
+- [Allure Report](https://mgrybyk.github.io/allure-report-branch-action/allure-action/main/self-test/7643572205_1706116100424/)
 - [Browse different branches](https://mgrybyk.github.io/allure-report-branch-action/allure-action/)
 - [Pull Request Comment Example](https://github.com/mgrybyk/allure-report-branch-action/pull/12)
 
@@ -106,13 +106,14 @@ The `allure-report-branch-action` is designed as a JavaScript action wrapped wit
 As far as `docker` action runs in linux environments only, it's required to do some extra steps for users running Windows and MacOS workflows. See [Types of actions](https://docs.github.com/en/actions/creating-actions/about-custom-actions#types-of-actions) for more details.
 
 - option 1: using upload/download artifacts. See [simple-elf/allure-report-action/issues/28#issuecomment-1139332329](https://github.com/simple-elf/allure-report-action/issues/28#issuecomment-1139332329)
-- option 2: use JS version of this action (raise an issue and I'll publish it). In this case you'll have to install Java and download download allure-commandline yourself.
+- option 2: use JS version of this action [mgrybyk/allure-report-branch-js-action](https://github.com/mgrybyk/allure-report-branch-js-action).
 
 ## Credits
 
 - [docker-java-node](https://github.com/timbru31/docker-java-node) for building Dockerimage with Java and NodeJS together
 - [thollander/actions-comment-pull-request](https://github.com/thollander/actions-comment-pull-request) for building Github Action that comments the linked PRs
 
-## Upcoming features
+## Planned features
 
-- cleanup old reports
+- cleanup `data.json` file per report. Raise an issue if you're interested!
+- think how to deal with branch cleaup without using url. Feel free to pick up.

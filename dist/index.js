@@ -29583,7 +29583,10 @@ const spawnProcess = async (command, args, cwd) => {
     });
 };
 
+// EXTERNAL MODULE: ./src/helpers.ts
+var helpers = __nccwpck_require__(3015);
 ;// CONCATENATED MODULE: ./src/cleanup.ts
+
 
 
 
@@ -29594,7 +29597,7 @@ const cleanupOutdatedBranches = async (ghPagesBaseDir) => {
         const remoteBranches = lsRemote
             .split('\n')
             .filter((l) => l.includes(prefix))
-            .map((l) => l.split(prefix)[1]);
+            .map((l) => (0,helpers/* normalizeBranchName */.i)(l.split(prefix)[1]));
         const localBranches = (await promises_.readdir(ghPagesBaseDir, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
         for (const localBranch of localBranches) {
             if (!remoteBranches.includes(localBranch)) {
@@ -29644,11 +29647,13 @@ const cleanupOutdatedReports = async (ghPagesBaseDir, maxReports) => {
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "L": () => (/* binding */ getBranchName)
+/* harmony export */   "L": () => (/* binding */ getBranchName),
+/* harmony export */   "i": () => (/* binding */ normalizeBranchName)
 /* harmony export */ });
+const normalizeBranchName = (branchName) => branchName.replaceAll('/', '_').replaceAll('.', '_');
 const getBranchName = (gitRef, pull_request) => {
     const branchName = pull_request ? pull_request.head.ref : gitRef.replace('refs/heads/', '');
-    return branchName.replaceAll('/', '_').replaceAll('.', '_');
+    return normalizeBranchName(branchName);
 };
 
 

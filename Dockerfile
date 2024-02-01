@@ -8,6 +8,7 @@ RUN echo "===============" && \
     echo NodeJS: $(node --version) && \
     java -version && \
     echo "===============" && \
+    apk update && apk add git && \
     wget --no-verbose -O /tmp/allure-$RELEASE.tgz $ALLURE_REPO/$RELEASE/allure-commandline-$RELEASE.tgz && \
     tar -xf /tmp/allure-$RELEASE.tgz && \
     rm -rf /tmp/* && \

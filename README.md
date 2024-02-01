@@ -1,6 +1,8 @@
 # allure-report-branch-action
 
-Allure Report with history per branch (type: `docker`)
+A **Docker** version of the Allure Report with history per branch (type: `docker`)
+
+JavaScript version of the action: [allure-report-with-history-per-branch-js](https://github.com/marketplace/actions/allure-report-with-history-per-branch-js)
 
 See examples:
 
@@ -105,8 +107,8 @@ The `allure-report-branch-action` is designed as a JavaScript action wrapped wit
 
 As far as `docker` action runs in linux environments only, it's required to do some extra steps for users running Windows and MacOS workflows. See [Types of actions](https://docs.github.com/en/actions/creating-actions/about-custom-actions#types-of-actions) for more details.
 
-- option 1: using upload/download artifacts. See [simple-elf/allure-report-action/issues/28#issuecomment-1139332329](https://github.com/simple-elf/allure-report-action/issues/28#issuecomment-1139332329)
-- option 2: use JS version of this action [mgrybyk/allure-report-branch-js-action](https://github.com/mgrybyk/allure-report-branch-js-action).
+- option 1: use JS version of this action [mgrybyk/allure-report-branch-js-action](https://github.com/mgrybyk/allure-report-branch-js-action).
+- option 2: using upload/download artifacts. See [simple-elf/allure-report-action/issues/28#issuecomment-1139332329](https://github.com/simple-elf/allure-report-action/issues/28#issuecomment-1139332329)
 
 ## Credits
 

@@ -29595,7 +29595,10 @@ const cleanupOutdatedBranches = async (ghPagesBaseDir) => {
         const prefix = 'refs/heads/';
         console.log('GITHUB_WORKSPACE', process.env.GITHUB_WORKSPACE);
         console.log('RUNNER_WORKSPACE', process.env.RUNNER_WORKSPACE);
-        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads'], '/github/workspace');
+        console.log('/', await spawnProcess('ls', ['-al'], '/'));
+        console.log('/github/workspace', await spawnProcess('ls', ['-al'], '/github/workspace'));
+        console.log('/home', await spawnProcess('ls', ['-al'], '/home'));
+        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads', 'https://github.com/mgrybyk/allure-report-branch-action.git']);
         const remoteBranches = lsRemote
             .split('\n')
             .filter((l) => l.includes(prefix))

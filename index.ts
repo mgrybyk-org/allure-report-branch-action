@@ -1,3 +1,4 @@
+import * as path from 'path'
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as io from '@actions/io'
@@ -14,6 +15,7 @@ import {
 } from './src/allure.js'
 import { getBranchName } from './src/helpers.js'
 import { isFileExist } from './src/isFileExists.js'
+import { cleanupOutdatedBranches, cleanupOutdatedReports } from './src/cleanup.js'
 
 const baseDir = 'allure-action'
 
@@ -25,8 +27,11 @@ try {
     const ghPagesPath = core.getInput('gh_pages')
     const reportId = core.getInput('report_id')
     const listDirs = core.getInput('list_dirs') == 'true'
+    const cleanupEnabled = core.getInput('cleanup_enabled') == 'true'
+    const maxReports = parseInt(core.getInput('max_reports'), 10)
     const branchName = getBranchName(github.context.ref, github.context.payload.pull_request)
-    const reportBaseDir = `${ghPagesPath}/${baseDir}/${branchName}/${reportId}`
+    const ghPagesBaseDir = path.join(ghPagesPath, baseDir)
+    const reportBaseDir = path.join(ghPagesBaseDir, branchName, reportId)
 
     /**
      * `runId` is unique but won't change on job re-run
@@ -34,13 +39,13 @@ try {
      * that's why the `runTimestamp` is used to guarantee uniqueness
      */
     const runUniqueId = `${github.context.runId}_${runTimestamp}`
-    const reportDir = `${reportBaseDir}/${runUniqueId}`
+    const reportDir = path.join(reportBaseDir, runUniqueId)
 
     // urls
     const githubActionRunUrl = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${github.context.runId}`
     const ghPagesUrl = `https://${github.context.repo.owner}.github.io/${github.context.repo.repo}`
-    const ghPagesBaseDir = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`.replaceAll(' ', '%20')
-    const ghPagesReportDir = `${ghPagesBaseDir}/${runUniqueId}`.replaceAll(' ', '%20')
+    const ghPagesBaseUrl = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`.replaceAll(' ', '%20')
+    const ghPagesReportUrl = `${ghPagesBaseUrl}/${runUniqueId}`.replaceAll(' ', '%20')
 
     // log
     console.log({
@@ -53,8 +58,10 @@ try {
         branchName,
         reportBaseDir,
         reportDir,
-        report_url: ghPagesReportDir,
+        report_url: ghPagesReportUrl,
         listDirs,
+        cleanupEnabled,
+        maxReports,
     })
 
     if (!(await isFileExist(ghPagesPath))) {
@@ -74,19 +81,19 @@ try {
             await writeFolderListing(ghPagesPath, '.')
         }
         await writeFolderListing(ghPagesPath, baseDir)
-        await writeFolderListing(ghPagesPath, `${baseDir}/${branchName}`)
+        await writeFolderListing(ghPagesPath, path.join(baseDir, branchName))
     }
 
     // process allure report
     const lastRunId = await getLastRunId(reportBaseDir)
     if (lastRunId) {
-        await io.cp(`${reportBaseDir}/${lastRunId}/history`, sourceReportDir, { recursive: true })
+        await io.cp(path.join(reportBaseDir, lastRunId, 'history'), sourceReportDir, { recursive: true })
     }
     await writeExecutorJson(sourceReportDir, {
         runUniqueId,
         buildOrder: github.context.runId,
         buildUrl: githubActionRunUrl,
-        reportUrl: ghPagesReportDir,
+        reportUrl: ghPagesReportUrl,
     })
     await spawnAllure(sourceReportDir, reportDir)
     const results = await updateDataJson(reportBaseDir, reportDir, github.context.runId, runUniqueId)
@@ -94,13 +101,18 @@ try {
     await writeLastRunId(reportBaseDir, github.context.runId, runTimestamp)
 
     // outputs
-    core.setOutput('report_url', ghPagesReportDir)
-    core.setOutput('report_history_url', ghPagesBaseDir)
+    core.setOutput('report_url', ghPagesReportUrl)
+    core.setOutput('report_history_url', ghPagesBaseUrl)
     core.setOutput('test_result', results.testResult)
     core.setOutput('test_result_icon', getTestResultIcon(results.testResult))
     core.setOutput('test_result_passed', results.passed)
     core.setOutput('test_result_failed', results.failed)
     core.setOutput('test_result_total', results.total)
+
+    if (cleanupEnabled) {
+        await cleanupOutdatedBranches(ghPagesBaseDir)
+        await cleanupOutdatedReports(ghPagesBaseDir, maxReports)
+    }
 } catch (error) {
     core.setFailed(error.message)
 }

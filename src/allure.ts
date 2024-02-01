@@ -1,5 +1,6 @@
 import * as child_process from 'child_process'
 import * as fs from 'fs/promises'
+import * as path from 'path'
 import { allureReport } from './report_allure.js'
 import { isFileExist } from './isFileExists.js'
 
@@ -17,7 +18,7 @@ export const writeExecutorJson = async (
         reportUrl: string
     }
 ) => {
-    const dataFile = `${sourceReportDir}/executor.json`
+    const dataFile = path.join(sourceReportDir, 'executor.json')
     const dataJson: AllureExecutor = {
         // type is required, otherwise allure fails with java.lang.NullPointerException
         type: 'github',
@@ -47,7 +48,7 @@ export const spawnAllure = async (allureResultsDir: string, allureReportDir: str
 }
 
 export const getLastRunId = async (reportBaseDir: string) => {
-    const dataFile = `${reportBaseDir}/lastRun.json`
+    const dataFile = path.join(reportBaseDir, 'lastRun.json')
 
     if (await isFileExist(dataFile)) {
         const lastRun: LastRunJson = JSON.parse((await fs.readFile(dataFile)).toString('utf-8'))
@@ -58,7 +59,7 @@ export const getLastRunId = async (reportBaseDir: string) => {
 }
 
 export const writeLastRunId = async (reportBaseDir: string, runId: number, runTimestamp: number) => {
-    const dataFile = `${reportBaseDir}/lastRun.json`
+    const dataFile = path.join(reportBaseDir, 'lastRun.json')
 
     const dataJson: LastRunJson = { runId, runTimestamp }
 
@@ -66,8 +67,10 @@ export const writeLastRunId = async (reportBaseDir: string, runId: number, runTi
 }
 
 export const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: number, runUniqueId: string) => {
-    const summaryJson: AllureSummaryJson = JSON.parse((await fs.readFile(`${reportDir}/widgets/summary.json`)).toString('utf-8'))
-    const dataFile = `${reportBaseDir}/data.json`
+    const summaryJson: AllureSummaryJson = JSON.parse(
+        (await fs.readFile(path.join(reportDir, 'widgets', 'summary.json'))).toString('utf-8')
+    )
+    const dataFile = path.join(reportBaseDir, 'data.json')
     let dataJson: AllureRecord[]
 
     if (await isFileExist(dataFile)) {
@@ -109,18 +112,20 @@ export const getTestResultIcon = (testResult: AllureRecordTestResult) => {
     return '❔'
 }
 
-export const writeAllureListing = async (reportBaseDir: string) => fs.writeFile(`${reportBaseDir}/index.html`, allureReport)
+export const writeAllureListing = async (reportBaseDir: string) => fs.writeFile(path.join(reportBaseDir, 'index.html'), allureReport)
 
 export const isAllureResultsOk = async (sourceReportDir: string) => {
+    const allureResultExt = ['.json', '.xml']
     if (await isFileExist(sourceReportDir)) {
-        const listfiles = (await fs.readdir(sourceReportDir, { withFileTypes: true })).filter(
-            (d) => d.isFile() && d.name.toLowerCase().endsWith('.json')
-        )
+        const listfiles = (await fs.readdir(sourceReportDir, { withFileTypes: true })).filter((d) => {
+            const fileName = d.name.toLowerCase()
+            return d.isFile() && allureResultExt.some((ext) => fileName.endsWith(ext))
+        })
 
         if (listfiles.length > 0) {
             return true
         }
-        console.log('allure-results folder has no json files:', sourceReportDir)
+        console.log('allure-results folder has no json or xml files:', sourceReportDir)
         return false
     }
     console.log("allure-results folder doesn't exist:", sourceReportDir)

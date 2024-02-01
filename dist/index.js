@@ -29593,7 +29593,8 @@ var helpers = __nccwpck_require__(3015);
 const cleanupOutdatedBranches = async (ghPagesBaseDir) => {
     try {
         const prefix = 'refs/heads/';
-        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads']);
+        console.log('GITHUB_WORKFLOW', process.env.GITHUB_WORKFLOW);
+        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads'], '/github/workflow');
         const remoteBranches = lsRemote
             .split('\n')
             .filter((l) => l.includes(prefix))

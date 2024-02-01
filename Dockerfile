@@ -7,6 +7,7 @@ RUN echo "===============" && \
     echo Allure: $RELEASE && \
     echo NodeJS: $(node --version) && \
     java -version && \
+    ls -al /github/workflow && \
     echo "===============" && \
     apk update && apk add git && \
     wget --no-verbose -O /tmp/allure-$RELEASE.tgz $ALLURE_REPO/$RELEASE/allure-commandline-$RELEASE.tgz && \

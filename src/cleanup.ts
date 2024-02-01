@@ -6,8 +6,9 @@ import { normalizeBranchName } from './helpers.js'
 export const cleanupOutdatedBranches = async (ghPagesBaseDir: string) => {
     try {
         const prefix = 'refs/heads/'
-        console.log('GITHUB_WORKFLOW', process.env.GITHUB_WORKFLOW)
-        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads'], '/github/workflow')
+        console.log('GITHUB_WORKSPACE', process.env.GITHUB_WORKSPACE)
+        console.log('RUNNER_WORKSPACE', process.env.RUNNER_WORKSPACE)
+        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads'], '/github/workspace')
         const remoteBranches = lsRemote
             .split('\n')
             .filter((l) => l.includes(prefix))

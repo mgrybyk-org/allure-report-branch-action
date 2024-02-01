@@ -29396,7 +29396,7 @@ try {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput('test_result_failed', results.failed);
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput('test_result_total', results.total);
     if (cleanupEnabled) {
-        await (0,_src_cleanup_js__WEBPACK_IMPORTED_MODULE_7__/* .cleanupOutdatedBranches */ .B)(ghPagesBaseDir);
+        await (0,_src_cleanup_js__WEBPACK_IMPORTED_MODULE_7__/* .cleanupOutdatedBranches */ .B)(ghPagesBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo);
         await (0,_src_cleanup_js__WEBPACK_IMPORTED_MODULE_7__/* .cleanupOutdatedReports */ .g)(ghPagesBaseDir, maxReports);
     }
 }
@@ -29590,15 +29590,11 @@ var helpers = __nccwpck_require__(3015);
 
 
 
-const cleanupOutdatedBranches = async (ghPagesBaseDir) => {
+const cleanupOutdatedBranches = async (ghPagesBaseDir, repo) => {
     try {
         const prefix = 'refs/heads/';
-        console.log('GITHUB_WORKSPACE', process.env.GITHUB_WORKSPACE);
-        console.log('RUNNER_WORKSPACE', process.env.RUNNER_WORKSPACE);
-        console.log('/', await spawnProcess('ls', ['-al'], '/'));
-        console.log('/github/workspace', await spawnProcess('ls', ['-al'], '/github/workspace'));
-        console.log('/home', await spawnProcess('ls', ['-al'], '/home'));
-        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads', 'https://github.com/mgrybyk/allure-report-branch-action.git']);
+        // for some reason git won't pick up config, using url for now
+        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads', `https://github.com/${repo.owner}/${repo.repo}.git`], process.env.GITHUB_WORKSPACE);
         const remoteBranches = lsRemote
             .split('\n')
             .filter((l) => l.includes(prefix))

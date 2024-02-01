@@ -110,7 +110,7 @@ try {
     core.setOutput('test_result_total', results.total)
 
     if (cleanupEnabled) {
-        await cleanupOutdatedBranches(ghPagesBaseDir)
+        await cleanupOutdatedBranches(ghPagesBaseDir, github.context.repo)
         await cleanupOutdatedReports(ghPagesBaseDir, maxReports)
     }
 } catch (error) {

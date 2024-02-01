@@ -2,16 +2,17 @@ import * as path from 'path'
 import * as fs from 'fs/promises'
 import { spawnProcess } from './spawnProcess.js'
 import { normalizeBranchName } from './helpers.js'
+import { Context } from '@actions/github/lib/context.js'
 
-export const cleanupOutdatedBranches = async (ghPagesBaseDir: string) => {
+export const cleanupOutdatedBranches = async (ghPagesBaseDir: string, repo: Context['repo']) => {
     try {
         const prefix = 'refs/heads/'
-        console.log('GITHUB_WORKSPACE', process.env.GITHUB_WORKSPACE)
-        console.log('RUNNER_WORKSPACE', process.env.RUNNER_WORKSPACE)
-        console.log('/', await spawnProcess('ls', ['-al'], '/'))
-        console.log('/github/workspace', await spawnProcess('ls', ['-al'], '/github/workspace'))
-        console.log('/home', await spawnProcess('ls', ['-al'], '/home'))
-        const lsRemote = await spawnProcess('git', ['ls-remote', '--heads', 'https://github.com/mgrybyk/allure-report-branch-action.git'])
+        // for some reason git won't pick up config, using url for now
+        const lsRemote = await spawnProcess(
+            'git',
+            ['ls-remote', '--heads', `https://github.com/${repo.owner}/${repo.repo}.git`],
+            process.env.GITHUB_WORKSPACE
+        )
         const remoteBranches = lsRemote
             .split('\n')
             .filter((l) => l.includes(prefix))

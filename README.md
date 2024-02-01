@@ -116,3 +116,4 @@ As far as `docker` action runs in linux environments only, it's required to do s
 ## Planned features
 
 - cleanup `data.json` file per report. Raise an issue if you're interested!
+- think how to deal with branch cleaup without using url. Feel free to pick up.

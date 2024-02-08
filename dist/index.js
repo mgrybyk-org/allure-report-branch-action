@@ -29369,6 +29369,13 @@ try {
     }
     // action
     await _actions_io__WEBPACK_IMPORTED_MODULE_3__.mkdirP(reportBaseDir);
+    // cleanup (should be before the folder listing)
+    if (branchCleanupEnabled) {
+        await (0,_src_cleanup_js__WEBPACK_IMPORTED_MODULE_7__/* .cleanupOutdatedBranches */ .B)(ghPagesBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo);
+    }
+    if (maxReports > 0) {
+        await (0,_src_cleanup_js__WEBPACK_IMPORTED_MODULE_7__/* .cleanupOutdatedReports */ .g)(ghPagesBaseDir, maxReports);
+    }
     // folder listing
     if (listDirs) {
         if (await (0,_src_writeFolderListing_js__WEBPACK_IMPORTED_MODULE_4__/* .shouldWriteRootHtml */ .z)(ghPagesPath)) {
@@ -29404,12 +29411,6 @@ try {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput('test_result_total', results.total);
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput('run_unique_id', runUniqueId);
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput('report_path', reportDir);
-    if (branchCleanupEnabled) {
-        await (0,_src_cleanup_js__WEBPACK_IMPORTED_MODULE_7__/* .cleanupOutdatedBranches */ .B)(ghPagesBaseDir, _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo);
-    }
-    if (maxReports > 0) {
-        await (0,_src_cleanup_js__WEBPACK_IMPORTED_MODULE_7__/* .cleanupOutdatedReports */ .g)(ghPagesBaseDir, maxReports);
-    }
 }
 catch (error) {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(error.message);

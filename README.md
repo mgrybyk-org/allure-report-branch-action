@@ -7,7 +7,7 @@ JavaScript version of the action: [allure-report-with-history-per-branch-js](htt
 See examples:
 
 - [Allure History List](https://mgrybyk.github.io/allure-report-branch-action/allure-action/main/self-test/)
-- [Allure Report](https://mgrybyk.github.io/allure-report-branch-action/allure-action/main/self-test/7643572205_1706116100424/)
+- [Allure Report](https://mgrybyk.github.io/allure-report-branch-action/allure-action/main/self-test/latest.html)
 - [Browse different branches](https://mgrybyk.github.io/allure-report-branch-action/allure-action/)
 - [Pull Request Comment Example](https://github.com/mgrybyk/allure-report-branch-action/pull/12)
 

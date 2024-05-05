@@ -1,7 +1,10 @@
 import * as path from 'path'
 import * as fs from 'fs/promises'
 import { latestReport } from './report_latest.js'
+import { checkRealPath } from './fileUtils.js'
 
 export const writeLatestReport = async (relPath: string) => {
-    await fs.writeFile(path.join(relPath, 'latest.html'), latestReport)
+    const filePath = path.join(relPath, 'latest.html')
+    await checkRealPath(filePath)
+    await fs.writeFile(filePath, latestReport)
 }

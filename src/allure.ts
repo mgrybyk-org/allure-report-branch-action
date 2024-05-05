@@ -2,7 +2,7 @@ import * as child_process from 'child_process'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 import { allureReport } from './report_allure.js'
-import { isFileExist } from './isFileExists.js'
+import { checkRealPath, isFileExist } from './fileUtils.js'
 
 export const writeExecutorJson = async (
     sourceReportDir: string,
@@ -49,6 +49,7 @@ export const spawnAllure = async (allureResultsDir: string, allureReportDir: str
 
 export const getLastRunId = async (reportBaseDir: string) => {
     const dataFile = path.join(reportBaseDir, 'lastRun.json')
+    await checkRealPath(dataFile)
 
     if (await isFileExist(dataFile)) {
         const lastRun: LastRunJson = JSON.parse((await fs.readFile(dataFile)).toString('utf-8'))
@@ -60,6 +61,7 @@ export const getLastRunId = async (reportBaseDir: string) => {
 
 export const writeLastRunId = async (reportBaseDir: string, runId: number, runTimestamp: number) => {
     const dataFile = path.join(reportBaseDir, 'lastRun.json')
+    await checkRealPath(dataFile)
 
     const dataJson: LastRunJson = { runId, runTimestamp }
 
@@ -67,10 +69,11 @@ export const writeLastRunId = async (reportBaseDir: string, runId: number, runTi
 }
 
 export const updateDataJson = async (reportBaseDir: string, reportDir: string, runId: number, runUniqueId: string) => {
-    const summaryJson: AllureSummaryJson = JSON.parse(
-        (await fs.readFile(path.join(reportDir, 'widgets', 'summary.json'))).toString('utf-8')
-    )
+    const pathToSummaryJson = path.join(reportDir, 'widgets', 'summary.json')
+    await checkRealPath(pathToSummaryJson)
+    const summaryJson: AllureSummaryJson = JSON.parse((await fs.readFile(pathToSummaryJson)).toString('utf-8'))
     const dataFile = path.join(reportBaseDir, 'data.json')
+    await checkRealPath(dataFile)
     let dataJson: AllureRecord[]
 
     if (await isFileExist(dataFile)) {
@@ -112,7 +115,11 @@ export const getTestResultIcon = (testResult: AllureRecordTestResult) => {
     return '❔'
 }
 
-export const writeAllureListing = async (reportBaseDir: string) => fs.writeFile(path.join(reportBaseDir, 'index.html'), allureReport)
+export const writeAllureListing = async (reportBaseDir: string) => {
+    const filePath = path.join(reportBaseDir, 'index.html')
+    await checkRealPath(filePath)
+    await fs.writeFile(filePath, allureReport)
+}
 
 export const isAllureResultsOk = async (sourceReportDir: string) => {
     const allureResultExt = ['.json', '.xml']

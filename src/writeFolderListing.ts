@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs/promises'
 import { listingReport } from './report_listing.js'
-import { isFileExist } from './isFileExists.js'
+import { isFileExist } from './fileUtils.js'
 
 const indexHtmlFirstLine = '<!-- report-action -->'
 

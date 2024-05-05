@@ -14,7 +14,7 @@ import {
     isAllureResultsOk,
 } from './src/allure.js'
 import { getBranchName } from './src/helpers.js'
-import { isFileExist } from './src/isFileExists.js'
+import { isFileExist } from './src/fileUtils.js'
 import { cleanupOutdatedBranches, cleanupOutdatedReports } from './src/cleanup.js'
 import { writeLatestReport } from './src/writeLatest.js'
 

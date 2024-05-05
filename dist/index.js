@@ -29959,8 +29959,7 @@ const cleanupOutdatedReports = async (ghPagesBaseDir, maxReports) => {
 /* harmony import */ var fs_promises__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(fs_promises__WEBPACK_IMPORTED_MODULE_1__);
 
 
-const ROOT = process.cwd();
-console.log('log', ROOT, import.meta.dirname); // TODO DELETE
+const ROOT = import.meta.dirname;
 const checkRealPath = async (filePath) => {
     filePath = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.realpath(path__WEBPACK_IMPORTED_MODULE_0__.join(ROOT, filePath));
     if (!filePath.startsWith(ROOT)) {

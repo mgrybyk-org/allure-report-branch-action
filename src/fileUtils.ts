@@ -1,8 +1,7 @@
 import * as path from 'path'
 import * as fs from 'fs/promises'
 
-const ROOT = process.cwd()
-console.log('log', ROOT, import.meta.dirname) // TODO DELETE
+const ROOT = import.meta.dirname
 
 export const checkRealPath = async (filePath: string) => {
     filePath = await fs.realpath(path.join(ROOT, filePath))

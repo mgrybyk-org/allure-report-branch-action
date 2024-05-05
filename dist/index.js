@@ -29960,7 +29960,7 @@ const cleanupOutdatedReports = async (ghPagesBaseDir, maxReports) => {
 
 
 const ROOT = process.cwd();
-console.log('log', ROOT); // TODO DELETE
+console.log('log', ROOT, import.meta.dirname); // TODO DELETE
 const checkRealPath = async (filePath) => {
     filePath = await fs_promises__WEBPACK_IMPORTED_MODULE_1__.realpath(path__WEBPACK_IMPORTED_MODULE_0__.join(ROOT, filePath));
     if (!filePath.startsWith(ROOT)) {

@@ -32,7 +32,7 @@ inputs:
   max_reports:
     description: 'Max reports to keep per branch/report. Set to 0 to disable cleanup.'
     required: false
-    default: 100
+    default: 1000
 outputs:
   report_url:
     description: 'Published Allure Report url'

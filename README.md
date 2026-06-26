@@ -2,7 +2,7 @@
 
 A **Docker** version of the Allure Report with history per branch (type: `docker`)
 
-JavaScript version of the action: [allure-report-with-history-per-branch-js](https://github.com/marketplace/actions/allure-report-with-history-per-branch-js). The JavaScript vesrion is recommended!
+JavaScript version of the action: [allure-report-with-history-per-branch-js](https://github.com/marketplace/actions/allure-report-with-history-per-branch-js). The JavaScript variant is recommended!
 
 See examples:
 
@@ -25,7 +25,7 @@ permissions:
 
 steps:
   - name: Checkout gh-pages
-    uses: actions/checkout@v3
+    uses: actions/checkout@v5
     if: always()
     continue-on-error: true
     with:
@@ -33,7 +33,7 @@ steps:
       path: gh-pages-dir # checkout path
 
   - name: Allure Report Action
-    uses: mgrybyk-org/allure-report-branch-action@v1
+    uses: mgrybyk-org/allure-report-branch-action@v2
     if: always()
     continue-on-error: true
     id: allure # used in comment to PR
@@ -43,7 +43,7 @@ steps:
       report_dir: 'allure-results'
 
   - name: Git Commit and Push Action
-    uses: mgrybyk-org/git-commit-pull-push-action@v1
+    uses: mgrybyk-org/git-commit-pull-push-action@v2
     if: always()
     with:
       repository: gh-pages-dir
@@ -65,11 +65,11 @@ steps:
   - name: Comment PR with Allure Report link
     if: ${{ always() && github.event_name == 'pull_request' && steps.allure.outputs.report_url }}
     continue-on-error: true
-    uses: thollander/actions-comment-pull-request@v2
+    uses: thollander/actions-comment-pull-request@v3
     with:
       message: |
         ${{ steps.allure.outputs.test_result_icon }} [Allure Report](${{ steps.allure.outputs.report_url }}) | [History](${{ steps.allure.outputs.report_history_url }})
-      comment_tag: allure_report
+      comment-tag: allure_report
       mode: recreate
 ```
 

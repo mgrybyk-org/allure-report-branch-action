@@ -2,9 +2,9 @@ import * as path from 'path'
 import * as fs from 'fs/promises'
 import { spawnProcess } from './spawnProcess.js'
 import { normalizeBranchName } from './helpers.js'
-import { Context } from '@actions/github/lib/context.js'
+import type { context } from '@actions/github'
 
-export const cleanupOutdatedBranches = async (ghPagesBaseDir: string, repo: Context['repo']) => {
+export const cleanupOutdatedBranches = async (ghPagesBaseDir: string, repo: typeof context.repo) => {
     try {
         const prefix = 'refs/heads/'
         // for some reason git won't pick up config, using url for now

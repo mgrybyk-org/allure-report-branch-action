@@ -1,6 +1,6 @@
-FROM timbru31/java-node:17-alpine-jre-20
+FROM timbru31/java-node:17-alpine-jre-24
 
-ARG RELEASE=2.34.1
+ARG RELEASE=2.43.0
 ARG ALLURE_REPO=https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline
 
 RUN echo "===============" && \
